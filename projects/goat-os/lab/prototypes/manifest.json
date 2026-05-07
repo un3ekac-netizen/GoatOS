@@ -1,0 +1,13 @@
+[
+  {
+    "id": "goat-os-v1",
+    "name": "GoatOS v1",
+    "description": "The main operating system dashboard — Ops, Brain, Lab modules.",
+    "status": "active",
+    "port": 8765,
+    "path": "/home/ubuntu/projects/goat-os",
+    "entrypoint": "index.html",
+    "createdAt": "2026-05-07T11:58:00Z",
+    "updatedAt": "2026-05-07T13:20:00Z"
+  }
+]

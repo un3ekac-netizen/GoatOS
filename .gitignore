@@ -1,0 +1,46 @@
+# Secrets and tokens
+.openclaw/openclaw.json
+.openclaw/agents/*/sessions/*.jsonl
+.openclaw/agents/*/sessions/*.trajectory.jsonl
+.openclaw/canvas/
+.env
+*.env
+.env.*
+**/secrets/
+**/credentials/
+.git-credentials
+
+# Logs and temp
+*.log
+/tmp/
+nohup.out
+
+# Node / npm
+node_modules/
+.npm/
+.npm-global/
+.npmrc
+
+# System files
+.DS_Store
+Thumbs.db
+.Xdefaults
+.bashrc
+.config/
+.local/
+.gitconfig
+backup-*/
+.openclaw/workspace/
+.openclaw/agents/main/agent/
+.openclaw/models.json
+.openclaw/agents/main/sessions/*.bak-*
+.openclaw/identity/
+.openclaw/devices/
+.openclaw/exec-approvals.json
+.openclaw/openclaw.json.bak*
+.openclaw/openclaw.json.last-good
+.openclaw/tasks/
+.openclaw/update-check.json
+.openclaw/logs/
+.openclaw/agents/main/sessions/*.lock
+.openclaw/agents/main/sessions/*.trajectory-path.json

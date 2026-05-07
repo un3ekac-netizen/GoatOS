@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoatOS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.10);
+      /* Module palettes */
+      --ops-primary: #f59e0b;
+      --ops-glow: rgba(245, 158, 11, 0.6);
+      --ops-muted: rgba(245, 158, 11, 0.15);
+      --ops-text: #fbbf24;
+      --brain-primary: #38bdf8;
+      --brain-glow: rgba(56, 189, 248, 0.5);
+      --brain-muted: rgba(56, 189, 248, 0.12);
+      --brain-text: #7dd3fc;
+      --lab-primary: #22c55e;
+      --lab-glow: rgba(34, 197, 94, 0.6);
+      --lab-muted: rgba(34, 197, 94, 0.12);
+      --lab-text: #4ade80;
+    }
+
+    * { font-family: 'Ubuntu', sans-serif; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      min-height: 100vh;
+      overflow: hidden;
+      color: #fff;
+      margin: 0;
+    }
+
+    .font-mono { font-family: 'Ubuntu Mono', monospace !important; }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-border);
+    }
+
+    /* Dock */
+    .dock-container {
+      overflow: hidden;
+      border-radius: 16px;
+    }
+    .glass-dock-item {
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+    .glass-dock-item:hover {
+      background: var(--glass-hover);
+      border: 1px solid var(--glass-border);
+      transform: scale(1.06);
+    }
+    .glass-dock-item.active[data-module="ops"] {
+      background: var(--ops-muted);
+      border-color: var(--ops-primary);
+      box-shadow: 0 0 14px var(--ops-glow);
+    }
+    .glass-dock-item.active[data-module="brain"] {
+      background: var(--brain-muted);
+      border-color: var(--brain-primary);
+      box-shadow: 0 0 14px var(--brain-glow);
+    }
+    .glass-dock-item.active[data-module="lab"] {
+      background: var(--lab-muted);
+      border-color: var(--lab-primary);
+      box-shadow: 0 0 14px var(--lab-glow);
+    }
+
+    /* Neon text utility */
+    .neon-ops { color: var(--ops-text); text-shadow: 0 0 8px var(--ops-glow), 0 0 20px rgba(245,158,11,0.3); }
+    .neon-brain { color: var(--brain-text); text-shadow: 0 0 8px var(--brain-glow), 0 0 20px rgba(56,189,248,0.2); }
+    .neon-lab { color: var(--lab-text); text-shadow: 0 0 8px var(--lab-glow), 0 0 20px rgba(34,197,94,0.3); }
+
+    .icon-ops { color: var(--ops-text); filter: drop-shadow(0 0 6px var(--ops-glow)); }
+    .icon-brain { color: var(--brain-text); filter: drop-shadow(0 0 6px var(--brain-glow)); }
+    .icon-lab { color: var(--lab-text); filter: drop-shadow(0 0 6px var(--lab-glow)); }
+
+    /* Tabs */
+    .module-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      cursor: grab;
+      user-select: none;
+      font-family: 'Ubuntu', sans-serif;
+    }
+    .module-tab:hover { background: rgba(255,255,255,0.06); }
+    .module-tab.dragging { opacity: 0.5; cursor: grabbing; }
+
+    .tab-content { display: none; animation: fadeIn 0.3s ease; }
+    .tab-content.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.2s ease;
+    }
+    .dashboard-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.10);
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .status-dot.online { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.4); }
+    .status-dot.offline { background: #ef4444; }
+    .status-dot.warning { background: #fbbf24; }
+
+    /* File paths and URLs rendered lighter */
+    .font-mono { word-break: break-all; }
+    .build-path, a, [href] { color: rgba(255,255,255,0.65); }
+
+    .lucide { width: 20px; height: 20px; stroke-width: 1.5; }
+    .lucide-lg { width: 24px; height: 24px; }
+    .lucide-xl { width: 28px; height: 28px; }
+
+    /* Session overlay */
+    .session-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.2s ease;
+    }
+    .session-panel {
+      width: 75%;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: rgba(20,20,20,0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    /* macOS-style scrollbars */
+    .macos-scroll::-webkit-scrollbar { width: 8px; }
+    .macos-scroll::-webkit-scrollbar-track { background: transparent; }
+    .macos-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12);
+      border-radius: 100px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    .macos-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.22);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    .macos-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+    .session-panel::-webkit-scrollbar { width: 8px; }
+    .session-panel::-webkit-scrollbar-track { background: transparent; }
+    .session-panel::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12);
+      border-radius: 100px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    .session-panel::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.22);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    .session-panel { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="fixed top-0 left-0 right-0 h-11 glass-panel flex items-center px-4 z-50">
+    <div class="flex items-center gap-2">
+      <i data-lucide="hexagon" class="lucide text-white/50"></i>
+      <span class="font-medium text-sm tracking-wide">GoatOS</span>
+    </div>
+    <div class="flex-1 flex items-center justify-center gap-1" id="tab-bar"></div>
+    <div class="flex items-center gap-3 text-xs text-white/40 font-mono">
+      <span id="clock">--:--</span>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="pt-11 pb-20 h-screen overflow-y-auto macos-scroll" id="main-content">
+    <div id="module-container" class="p-6 max-w-7xl mx-auto"></div>
+  </div>
+
+  <!-- Session Overlay (hidden by default) -->
+  <div id="session-overlay" class="session-overlay" style="display:none" onclick="closeSessionOverlay(event)">
+    <div class="session-panel" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-medium text-lg" id="session-overlay-title">Session Details</h3>
+        <button onclick="closeSessionOverlay()" class="text-white/40 hover:text-white/80 transition">
+          <i data-lucide="x" class="lucide"></i>
+        </button>
+      </div>
+      <div id="session-overlay-content" class="font-mono text-sm text-white/70 leading-relaxed"></div>
+    </div>
+  </div>
+
+  <!-- Prototype Overlay -->
+  <div id="prototype-overlay" class="session-overlay" style="display:none" onclick="closePrototypeOverlay(event)">
+    <div class="session-panel" style="width:75%;height:80vh;padding:0;overflow:hidden;" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-5 py-3 border-b border-white/8">
+        <div class="flex items-center gap-3">
+          <i data-lucide="boxes" class="lucide icon-lab"></i>
+          <h3 class="font-medium text-sm" id="prototype-overlay-title">Prototype</h3>
+          <span class="text-[10px] font-mono text-white/25" id="prototype-overlay-meta"></span>
+        </div>
+        <button onclick="closePrototypeOverlay()" class="text-white/40 hover:text-white/80 transition">
+          <i data-lucide="x" class="lucide"></i>
+        </button>
+      </div>
+      <div id="prototype-detail" class="p-6 overflow-y-auto macos-scroll" style="height:calc(80vh - 52px);"></div>
+    </div>
+  </div>
+
+  <!-- Dock -->
+  <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
+    <div class="glass-panel dock-container px-10 py-2 flex items-center gap-8">
+      <button class="glass-dock-item rounded-xl px-5 py-2 flex items-center gap-2" data-module="ops" onclick="activateModule('ops')">
+        <i data-lucide="cpu" class="lucide icon-ops"></i>
+        <span class="text-xs font-medium text-white/50">Ops</span>
+      </button>
+      <button class="glass-dock-item rounded-xl px-5 py-2 flex items-center gap-2" data-module="brain" onclick="activateModule('brain')">
+        <i data-lucide="brain" class="lucide icon-brain"></i>
+        <span class="text-xs font-medium text-white/50">Brain</span>
+      </button>
+      <button class="glass-dock-item rounded-xl px-5 py-2 flex items-center gap-2" data-module="lab" onclick="activateModule('lab')">
+        <i data-lucide="flask-conical" class="lucide icon-lab"></i>
+        <span class="text-xs font-medium text-white/50">Lab</span>
+      </button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    const modules = {
+      ops: {
+        name: 'Ops', icon: 'cpu', neon: 'neon-ops', iconClass: 'icon-ops',
+        tabs: [
+          { id: 'dashboard', name: 'Dashboard', icon: 'layout-dashboard' },
+          { id: 'mission-control', name: 'Mission Control', icon: 'radar' },
+          { id: 'cron-health', name: 'Cron Health', icon: 'clock' }
+        ]
+      },
+      brain: {
+        name: 'Brain', icon: 'brain', neon: 'neon-brain', iconClass: 'icon-brain',
+        tabs: [
+          { id: 'dashboard', name: 'Dashboard', icon: 'layout-dashboard' },
+          { id: 'daily-briefs', name: 'Daily Briefs', icon: 'newspaper' },
+          { id: 'os-docs', name: 'OS Docs', icon: 'book-open' }
+        ]
+      },
+      lab: {
+        name: 'Lab', icon: 'flask-conical', neon: 'neon-lab', iconClass: 'icon-lab',
+        tabs: [
+          { id: 'dashboard', name: 'Dashboard', icon: 'layout-dashboard' },
+          { id: 'prototypes', name: 'Prototypes', icon: 'boxes' },
+          { id: 'overnight-builds', name: 'Overnight Builds', icon: 'moon' },
+          { id: 'build-logs', name: 'Build Logs', icon: 'terminal' },
+          { id: 'self-improvement', name: 'Self-Improvement', icon: 'lightbulb' }
+        ]
+      }
+    };
+
+    let activeModule = 'ops';
+    let activeTab = 'dashboard';
+    let tabOrder = {};
+    Object.keys(modules).forEach(m => { tabOrder[m] = modules[m].tabs.map(t => t.id); });
+
+    const API = 'http://127.0.0.1:8766';
+
+    // Model data (multi-model)
+    const modelsData = [
+      { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', provider: 'Abacus AI', status: 'online', thinking: 'medium', active: true },
+      { id: 'kimi-k2.6', name: 'Kimi K2.6', provider: 'Abacus AI', status: 'online', thinking: '--', active: false },
+      { id: 'codex-5.3', name: 'Codex 5.3', provider: 'OpenAI', status: 'offline', thinking: '--', active: false }
+    ];
+
+    // Live session data (populated from API)
+    let sessionsData = [];
+
+    function renderTabs() {
+      const bar = document.getElementById('tab-bar');
+      const mod = modules[activeModule];
+      bar.innerHTML = '';
+      tabOrder[activeModule].forEach((tabId, idx) => {
+        const tab = mod.tabs.find(t => t.id === tabId);
+        if (!tab) return;
+        const isActive = tabId === activeTab;
+        const btn = document.createElement('button');
+        btn.className = `module-tab px-4 py-1.5 rounded-lg flex items-center gap-2 text-sm ${isActive ? 'bg-white/10 ' + mod.neon : 'text-white/40'}`;
+        btn.draggable = true;
+        btn.dataset.tab = tabId;
+        btn.innerHTML = `<i data-lucide="${tab.icon}" class="lucide ${isActive ? mod.iconClass : ''}"></i><span>${tab.name}</span>`;
+        btn.onclick = () => activateTab(tabId);
+        btn.addEventListener('dragstart', e => { btn.classList.add('dragging'); e.dataTransfer.setData('text/plain', tabId); });
+        btn.addEventListener('dragend', () => btn.classList.remove('dragging'));
+        btn.addEventListener('dragover', e => { e.preventDefault(); });
+        btn.addEventListener('drop', e => {
+          e.preventDefault();
+          const draggedId = e.dataTransfer.getData('text/plain');
+          if (draggedId === btn.dataset.tab) return;
+          const arr = tabOrder[activeModule];
+          const from = arr.indexOf(draggedId), to = arr.indexOf(btn.dataset.tab);
+          arr.splice(from, 1); arr.splice(to, 0, draggedId);
+          renderTabs(); lucide.createIcons();
+        });
+        bar.appendChild(btn);
+      });
+    }
+
+    // Track which modules have been rendered
+    const renderedModules = {};
+
+    function renderModuleContent() {
+      const container = document.getElementById('module-container');
+      const mod = modules[activeModule];
+
+      // Hide all module wrappers
+      container.querySelectorAll('.module-wrapper').forEach(el => el.style.display = 'none');
+
+      let wrapper = document.getElementById('module-' + activeModule);
+
+      // Only build DOM once per module
+      if (!renderedModules[activeModule]) {
+        wrapper = document.createElement('div');
+        wrapper.id = 'module-' + activeModule;
+        wrapper.className = 'module-wrapper';
+
+        let html = '';
+        // Dashboard tab
+        const dashboardRenderers = { ops: renderOpsDashboard, brain: renderBrainDashboard, lab: renderLabDashboard };
+        html += `<div id="${activeModule}-tab-dashboard" class="tab-content ${activeTab === 'dashboard' ? 'active' : ''}">`;
+        html += `<h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="${mod.icon}" class="lucide-lg ${mod.iconClass}"></i><span class="${mod.neon}">${mod.name} Dashboard</span></h2>`;
+        if (dashboardRenderers[activeModule]) html += dashboardRenderers[activeModule]();
+        html += `</div>`;
+
+        // Tab views
+        if (activeModule === 'ops') html += renderOpsTabs();
+        else if (activeModule === 'brain') html += renderBrainTabs();
+        else if (activeModule === 'lab') html += renderLabTabs();
+
+        wrapper.innerHTML = html;
+        container.appendChild(wrapper);
+        renderedModules[activeModule] = true;
+      }
+
+      // Show current module
+      wrapper.style.display = 'block';
+
+      // Toggle tab visibility within the module
+      wrapper.querySelectorAll('.tab-content').forEach(el => {
+        const tabId = el.id.replace(activeModule + '-tab-', '').replace('tab-', '');
+        el.classList.toggle('active', tabId === activeTab);
+      });
+    }
+
+    function renderOpsDashboard() {
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <!-- Models -->
+          <div class="dashboard-card rounded-xl p-5 cursor-pointer" onclick="activateTab('mission-control')">
+            <div class="flex items-center gap-3 mb-4">
+              <i data-lucide="zap" class="lucide icon-ops"></i>
+              <h3 class="font-medium text-sm neon-ops">Models</h3>
+            </div>
+            <div class="space-y-2">
+              ${modelsData.map(m => `
+                <div class="flex items-center justify-between p-1.5 rounded-lg ${m.active ? 'bg-white/5' : ''}">
+                  <div class="flex items-center gap-2">
+                    <span class="status-dot ${m.status === 'online' ? 'online' : 'offline'}"></span>
+                    <span class="text-xs font-mono">${m.name}</span>
+                  </div>
+                  <span class="text-[10px] text-white/30">${m.active ? 'active' : m.status}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <!-- Sessions -->
+          <div class="dashboard-card rounded-xl p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <i data-lucide="monitor" class="lucide icon-ops"></i>
+              <h3 class="font-medium text-sm neon-ops">Active Sessions</h3>
+            </div>
+            <div class="space-y-1.5">
+              ${sessionsData.map(s => `
+                <div class="flex items-center justify-between p-1.5 rounded-lg bg-white/5 cursor-pointer hover:bg-white/8 transition" onclick="event.stopPropagation(); openSession('${s.sessionId}')">
+                  <div class="flex items-center gap-2">
+                    <span class="status-dot online"></span>
+                    <span class="text-xs">${s.preview ? s.preview.slice(0, 30) + '...' : s.sessionId.slice(0, 8)}</span>
+                  </div>
+                  <span class="text-[10px] text-white/30 font-mono">${s.sessionId.slice(0, 8)}</span>
+                </div>
+              `).join('')}
+              <div class="text-[10px] text-white/25 mt-1">${sessionsData.length} active session${sessionsData.length !== 1 ? 's' : ''}</div>
+            </div>
+          </div>
+          <!-- Cron Health -->
+          <div class="dashboard-card rounded-xl p-5 cursor-pointer" onclick="activateTab('cron-health')">
+            <div class="flex items-center gap-3 mb-4">
+              <i data-lucide="clock" class="lucide icon-ops"></i>
+              <h3 class="font-medium text-sm neon-ops">Cron Health</h3>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-white/40">Total</span>
+                <span class="text-xs font-semibold">0</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-white/40">Healthy</span>
+                <span class="flex items-center gap-1.5 text-xs"><span class="status-dot online"></span>0</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-white/40">Failed</span>
+                <span class="flex items-center gap-1.5 text-xs"><span class="status-dot offline"></span>0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderOpsTabs() {
+      let html = '';
+      // Mission Control
+      html += `<div id="tab-mission-control" class="tab-content ${activeTab === 'mission-control' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="radar" class="lucide-lg icon-ops"></i><span class="neon-ops">Mission Control</span></h2>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          ${modelsData.map(m => `
+            <div class="dashboard-card rounded-xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="cpu" class="lucide icon-ops"></i>
+                  <h3 class="font-medium text-sm">${m.name}</h3>
+                </div>
+                <span class="flex items-center gap-1.5 text-xs"><span class="status-dot ${m.status === 'online' ? 'online' : 'offline'}"></span>${m.status}</span>
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between"><span class="text-xs text-white/40">Provider</span><span class="text-xs font-mono">${m.provider}</span></div>
+                <div class="flex items-center justify-between"><span class="text-xs text-white/40">ID</span><span class="text-xs font-mono">${m.id}</span></div>
+                <div class="flex items-center justify-between"><span class="text-xs text-white/40">Thinking</span><span class="text-xs">${m.thinking}</span></div>
+                ${m.active ? '<div class="mt-2 text-[10px] font-medium neon-ops text-center py-1 rounded bg-white/5">ACTIVE</div>' : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <!-- Sessions -->
+        <h3 class="text-lg font-light mt-6 mb-4 flex items-center gap-2 neon-ops"><i data-lucide="monitor" class="lucide icon-ops"></i>Active Sessions</h3>
+        <div class="space-y-2">
+          ${sessionsData.map(s => `
+            <div class="dashboard-card rounded-xl p-4 cursor-pointer hover:bg-white/6 transition" onclick="openSession('${s.sessionId}')">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="status-dot online"></span>
+                  <span class="font-medium text-sm">${s.preview ? s.preview.slice(0, 60) + '...' : s.sessionId.slice(0, 12)}</span>
+                  <span class="text-xs font-mono text-white/30">${s.model}</span>
+                </div>
+                <div class="flex items-center gap-4 text-xs text-white/40">
+                  <span class="font-mono text-white/20">${s.sessionId.slice(0, 8)}</span>
+                  <span>${s.messageCount} msgs</span>
+                  <span>${s.channel}</span>
+                  <i data-lucide="chevron-right" class="lucide text-white/20"></i>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <!-- Cron Overview -->
+        <h3 class="text-lg font-light mt-6 mb-4 flex items-center gap-2 neon-ops"><i data-lucide="clock" class="lucide icon-ops"></i>Cron Jobs</h3>
+        <div class="dashboard-card rounded-xl p-5">
+          <table class="w-full text-sm font-mono">
+            <thead><tr class="text-white/30 border-b border-white/8"><th class="text-left py-2 px-3">Name</th><th class="text-left py-2 px-3">Schedule</th><th class="text-left py-2 px-3">Status</th><th class="text-left py-2 px-3">Last Run</th></tr></thead>
+            <tbody><tr><td colspan="4" class="py-4 text-center text-white/20">No cron jobs configured</td></tr></tbody>
+          </table>
+        </div>
+      </div>`;
+      // (Sessions tab removed per Albs' request)
+      html += `<!-- no sessions tab --><div id="tab-placeholder" class="tab-content" style="display:none">
+      </div>`;
+      // Cron Health tab
+      html += `<div id="tab-cron-health" class="tab-content ${activeTab === 'cron-health' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="clock" class="lucide-lg icon-ops"></i><span class="neon-ops">Cron Health</span></h2>
+        <div class="dashboard-card rounded-xl p-5"><p class="text-white/40">Detailed cron monitoring coming soon.</p></div></div>`;
+      return html;
+    }
+
+    function renderBrainDashboard() {
+      const latestBrief = briefsCache.length > 0 ? briefsCache[0] : null;
+      const featureTabs = modules.brain.tabs.filter(t => t.id !== 'dashboard');
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${featureTabs.map(tab => {
+            let preview = '<p class="text-xs text-white/25 font-mono">No data yet</p>';
+            if (tab.id === 'os-docs') {
+              preview = '<div class="flex items-center gap-2 mt-1"><i data-lucide="file-text" class="icon-brain" style="width:14px;height:14px;"></i><span class="text-xs text-white/40">Updated nightly at midnight</span></div>';
+            }
+            if (tab.id === 'daily-briefs' && latestBrief) {
+              const d = new Date(latestBrief.date + 'T00:00:00');
+              const formatted = d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+              preview = '<div class="flex items-center gap-2 mt-1"><i data-lucide="calendar" class="icon-brain" style="width:14px;height:14px;"></i><span class="text-xs text-white/40">' + formatted + '</span></div>';
+            }
+            return '<div class="dashboard-card rounded-xl p-5 cursor-pointer" onclick="activateTab(\'' + tab.id + '\')">' +
+              '<div class="flex items-center gap-3 mb-3">' +
+                '<div class="p-2 rounded-lg bg-white/5"><i data-lucide="' + tab.icon + '" class="lucide-lg icon-brain"></i></div>' +
+                '<h3 class="font-medium">' + tab.name + '</h3>' +
+              '</div>' +
+              preview +
+            '</div>';
+          }).join('')}
+        </div>
+      `;
+    }
+
+    let briefsCache = [];
+    let activeBriefDate = null;
+
+    async function fetchBriefs() {
+      try {
+        const res = await fetch(`${API}/api/briefs`);
+        briefsCache = await res.json();
+      } catch { briefsCache = []; }
+    }
+
+    async function loadBrief(date) {
+      activeBriefDate = date;
+      const viewer = document.getElementById('brief-viewer');
+      if (!viewer) return;
+      viewer.innerHTML = '<div class="text-white/30 text-sm p-4">Loading...</div>';
+      // Highlight active in sidebar
+      document.querySelectorAll('.brief-item').forEach(el => {
+        el.classList.toggle('bg-white/8', el.dataset.date === date);
+        el.classList.toggle('border-l-2', el.dataset.date === date);
+        el.classList.toggle('border-sky-400/40', el.dataset.date === date);
+      });
+      try {
+        const res = await fetch(`${API}/api/briefs/${date}`);
+        const data = await res.json();
+        viewer.innerHTML = renderMarkdown(data.content);
+      } catch {
+        viewer.innerHTML = '<div class="text-red-400/50 text-sm p-4">Failed to load brief.</div>';
+      }
+    }
+
+    function renderMarkdown(md) {
+      // Lightweight markdown renderer
+      let html = md
+        // Headings
+        .replace(/^### (.+)$/gm, '<h3 class="text-base font-medium text-sky-300/80 mt-5 mb-2">$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2 class="text-lg font-medium neon-brain mt-6 mb-3">$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1 class="text-xl font-medium neon-brain mb-4">$1</h1>')
+        // Bold
+        .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white/80 font-medium">$1</strong>')
+        // Italic
+        .replace(/\*(.+?)\*/g, '<em class="text-white/60 italic">$1</em>')
+        // Inline code
+        .replace(/`(.+?)`/g, '<code class="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded text-sky-300/70">$1</code>')
+        // List items
+        .replace(/^- (.+)$/gm, '<li class="flex gap-2 items-start text-sm text-white/55 mb-1.5"><span class="text-sky-400/40 mt-1 flex-shrink-0">&#8226;</span><span>$1</span></li>')
+        // Paragraphs (lines not starting with < or empty)
+        .replace(/^(?!<|$|\s*$)(.+)$/gm, '<p class="text-sm text-white/50 mb-2 leading-relaxed">$1</p>');
+      // Wrap consecutive <li> in <ul>
+      html = html.replace(/(<li[^>]*>.*?<\/li>\s*)+/gs, (match) => {
+        return '<ul class="space-y-0.5 mb-3 pl-1">' + match + '</ul>';
+      });
+      return '<div class="brief-content">' + html + '</div>';
+    }
+
+    async function initOsDocs() {
+      const viewer = document.getElementById('os-docs-viewer');
+      if (!viewer) return;
+      viewer.innerHTML = '<div class="text-white/30 text-sm">Loading documentation...</div>';
+      try {
+        const res = await fetch(`${API}/api/os-docs`);
+        const data = await res.json();
+        viewer.innerHTML = renderMarkdown(data.content);
+      } catch {
+        viewer.innerHTML = '<div class="text-red-400/50 text-sm">Failed to load documentation.</div>';
+      }
+    }
+
+    function renderBrainTabs() {
+      let html = '';
+
+      // OS Docs tab
+      html += `<div id="tab-os-docs" class="tab-content ${activeTab === 'os-docs' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="book-open" class="lucide-lg icon-brain"></i><span class="neon-brain">OS Documentation</span></h2>
+        <div class="dashboard-card rounded-xl overflow-y-auto macos-scroll" style="height: calc(100vh - 170px);">
+          <div id="os-docs-viewer" class="p-6">
+            <div class="text-white/30 text-sm">Loading documentation...</div>
+          </div>
+        </div>
+      </div>`;
+
+      html += `<div id="tab-daily-briefs" class="tab-content ${activeTab === 'daily-briefs' ? 'active' : ''}">
+        <div class="flex gap-3" style="height: calc(100vh - 170px);">
+          <!-- Left sidebar: brief history -->
+          <div class="w-56 flex-shrink-0 flex flex-col">
+            <h3 class="text-xs font-medium text-white/30 uppercase tracking-wider mb-3 px-2 flex items-center gap-2"><i data-lucide="archive" class="lucide" style="width:14px;height:14px;"></i>History</h3>
+            <div id="brief-sidebar" class="flex-1 overflow-y-auto macos-scroll space-y-0.5">
+              <div class="text-xs text-white/20 px-2">Loading...</div>
+            </div>
+          </div>
+          <!-- Right: markdown viewer -->
+          <div class="flex-1 dashboard-card rounded-xl overflow-y-auto macos-scroll">
+            <div id="brief-viewer" class="p-6">
+              <div class="text-white/30 text-sm">Select a brief from the sidebar.</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+      return html;
+    }
+
+    // Lab data caches
+    let prototypesCache = [];
+    let buildsCache = [];
+    let buildLogsCache = [];
+    let ideasCache = [];
+
+    async function fetchLabData() {
+      try {
+        const [pRes, bRes, blRes, iRes] = await Promise.all([
+          fetch(`${API}/api/prototypes`),
+          fetch(`${API}/api/overnight-builds`),
+          fetch(`${API}/api/build-logs`),
+          fetch(`${API}/api/ideas`)
+        ]);
+        prototypesCache = await pRes.json();
+        buildsCache = await bRes.json();
+        buildLogsCache = await blRes.json();
+        ideasCache = await iRes.json();
+      } catch (e) { console.warn('Lab data fetch failed:', e); }
+    }
+
+    function renderLabDashboard() {
+      const stageColors = { 'planned': 'text-white/40', 'in-progress': 'neon-lab', 'complete': 'text-green-400' };
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Prototypes -->
+          <div class="dashboard-card rounded-xl p-5 cursor-pointer" onclick="activateTab('prototypes')">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="p-2 rounded-lg bg-white/5"><i data-lucide="boxes" class="lucide-lg icon-lab"></i></div>
+              <h3 class="font-medium">Prototypes</h3>
+            </div>
+            <div class="space-y-1.5">
+              ${prototypesCache.length > 0 ? prototypesCache.slice(0, 3).map(p => `
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-white/50">${p.name}</span>
+                  <span class="text-[10px] font-mono ${p.status === 'active' ? 'neon-lab' : 'text-white/25'}">${p.status}</span>
+                </div>
+              `).join('') : '<p class="text-xs text-white/25 font-mono">No prototypes yet</p>'}
+            </div>
+          </div>
+          <!-- Overnight Builds -->
+          <div class="dashboard-card rounded-xl p-5 cursor-pointer" onclick="activateTab('overnight-builds')">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="p-2 rounded-lg bg-white/5"><i data-lucide="moon" class="lucide-lg icon-lab"></i></div>
+              <h3 class="font-medium">Overnight Builds</h3>
+            </div>
+            <div class="space-y-1.5">
+              ${buildsCache.length > 0 ? `
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-white/50">Latest</span>
+                  <span class="text-[10px] font-mono text-white/30">${buildsCache[0].date || '--'}</span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-white/40">Total runs</span>
+                  <span class="text-xs">${buildsCache.length}</span>
+                </div>
+              ` : '<p class="text-xs text-white/25 font-mono">No overnight builds yet</p>'}
+            </div>
+          </div>
+          <!-- Build Logs -->
+          <div class="dashboard-card rounded-xl p-5 cursor-pointer" onclick="activateTab('build-logs')">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="p-2 rounded-lg bg-white/5"><i data-lucide="terminal" class="lucide-lg icon-lab"></i></div>
+              <h3 class="font-medium">Build Logs</h3>
+            </div>
+            <div class="space-y-1.5">
+              ${buildLogsCache.length > 0 ? `
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-white/50">Latest</span>
+                  <span class="flex items-center gap-1.5"><span class="status-dot ${buildLogsCache[0].status === 'success' ? 'online' : 'offline'}"></span><span class="text-[10px] font-mono">${buildLogsCache[0].name}</span></span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-white/50">Total</span>
+                  <span>${buildLogsCache.length}</span>
+                </div>
+              ` : '<p class="text-xs text-white/25 font-mono">No build logs yet</p>'}
+            </div>
+          </div>
+          <!-- Self-Improvement -->
+          <div class="dashboard-card rounded-xl p-5 cursor-pointer" onclick="activateTab('self-improvement')">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="p-2 rounded-lg bg-white/5"><i data-lucide="lightbulb" class="lucide-lg icon-lab"></i></div>
+              <h3 class="font-medium">Self-Improvement</h3>
+            </div>
+            <div class="space-y-1.5">
+              ${ideasCache.length > 0 ? ideasCache.slice(0, 3).map(i => `
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-white/50">${i.title}</span>
+                  <span class="text-[10px] font-mono ${stageColors[i.stage] || 'text-white/25'}">${i.stage}</span>
+                </div>
+              `).join('') : '<p class="text-xs text-white/25 font-mono">No ideas yet</p>'}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLabTabs() {
+      const ic = 'icon-lab', n = 'neon-lab';
+      let html = '';
+
+      // Prototypes tab
+      html += `<div id="tab-prototypes" class="tab-content ${activeTab === 'prototypes' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="boxes" class="lucide-lg ${ic}"></i><span class="${n}">Prototypes</span></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="prototypes-grid">
+          ${prototypesCache.map(p => `
+            <div class="dashboard-card rounded-xl p-5 cursor-pointer hover:border-green-500/20 transition" onclick="openPrototype('${p.id}')">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm">${p.name}</h3>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full ${p.status === 'active' ? 'bg-green-500/10 text-green-400' : 'bg-white/5 text-white/30'}">${p.status}</span>
+              </div>
+              <p class="text-xs text-white/40 mb-3">${p.description}</p>
+              <div class="flex items-center justify-between text-[10px] text-white/25">
+                <span class="font-mono">port ${p.port}</span>
+                <span>${new Date(p.updatedAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}</span>
+              </div>
+            </div>
+          `).join('')}
+          ${prototypesCache.length === 0 ? '<div class="dashboard-card rounded-xl p-5 text-sm text-white/30">No prototypes yet. Spin one up to get started.</div>' : ''}
+        </div>
+      </div>`;
+
+      // Overnight Builds tab
+      html += `<div id="tab-overnight-builds" class="tab-content ${activeTab === 'overnight-builds' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="moon" class="lucide-lg ${ic}"></i><span class="${n}">Overnight Builds</span></h2>
+        <div class="dashboard-card rounded-xl p-5">
+          ${buildsCache.length > 0 ? `
+            <table class="w-full text-sm font-mono">
+              <thead><tr class="text-white/30 border-b border-white/8">
+                <th class="text-left py-2 px-3">Date</th>
+                <th class="text-left py-2 px-3">Job</th>
+                <th class="text-left py-2 px-3">Status</th>
+                <th class="text-left py-2 px-3">Duration</th>
+                <th class="text-left py-2 px-3">Summary</th>
+              </tr></thead>
+              <tbody>
+                ${buildsCache.map(b => `
+                  <tr class="border-b border-white/5 hover:bg-white/3">
+                    <td class="py-2 px-3 text-white/50">${b.date}</td>
+                    <td class="py-2 px-3 text-white/40">${b.job}</td>
+                    <td class="py-2 px-3"><span class="flex items-center gap-1.5"><span class="status-dot ${b.status === 'success' ? 'online' : 'offline'}"></span>${b.status}</span></td>
+                    <td class="py-2 px-3 text-white/40">${b.duration || '--'}</td>
+                    <td class="py-2 px-3 text-white/40">${b.summary || '--'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : `
+            <div class="flex flex-col items-center justify-center py-12 text-white/20">
+              <i data-lucide="moon" class="lucide-xl mb-3"></i>
+              <p class="text-sm">No overnight builds yet</p>
+              <p class="text-xs mt-1">Cron jobs will log their runs here once configured.</p>
+            </div>
+          `}
+        </div>
+      </div>`;
+
+      // Build Logs tab
+      html += `<div id="tab-build-logs" class="tab-content ${activeTab === 'build-logs' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="terminal" class="lucide-lg ${ic}"></i><span class="${n}">Build Logs</span></h2>
+        <div class="flex gap-3" style="height: calc(100vh - 170px);">
+          <!-- Left sidebar: build log list (20%) -->
+          <div class="w-1/5 flex-shrink-0 flex flex-col">
+            <h3 class="text-xs font-medium text-white/30 uppercase tracking-wider mb-3 px-2 flex items-center gap-2"><i data-lucide="list" class="lucide" style="width:14px;height:14px;"></i>Builds</h3>
+            <div id="build-log-sidebar" class="flex-1 overflow-y-auto macos-scroll space-y-0.5">
+              ${buildLogsCache.length > 0 ? buildLogsCache.map((l, idx) => {
+                const d = l.timestamp ? new Date(l.timestamp) : null;
+                const dayName = d ? d.toLocaleDateString('en-AU', { weekday: 'short', timeZone: 'Australia/Sydney' }) : '';
+                const dayNum = d ? d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', timeZone: 'Australia/Sydney' }) : '--';
+                return `
+                  <div class="build-log-item flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover:bg-white/5 transition text-xs ${idx === 0 ? 'bg-white/8 border-l-2 border-green-400/40' : ''}" data-build-id="${l.id}" onclick="selectBuildLog('${l.id}')">
+                    <div class="flex-shrink-0">
+                      <span class="status-dot ${l.status === 'success' ? 'online' : l.status === 'failed' ? 'offline' : 'warning'}"></span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="text-white/50 truncate">${l.name || 'Build'}</div>
+                      <div class="text-[10px] text-white/25 font-mono">${dayName} ${dayNum}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('') : '<div class="text-xs text-white/20 px-2">No builds yet.</div>'}
+            </div>
+          </div>
+          <!-- Right: build log detail (75%) -->
+          <div class="flex-1 dashboard-card rounded-xl overflow-y-auto macos-scroll">
+            <div id="build-log-viewer" class="p-6">
+              ${buildLogsCache.length > 0 ? renderBuildLogDetail(buildLogsCache[0]) : '<div class="flex flex-col items-center justify-center py-12 text-white/20"><i data-lucide="terminal" class="lucide-xl mb-3"></i><p class="text-sm">No build logs yet</p><p class="text-xs mt-1">Logs from overnight and on-demand builds will appear here.</p></div>'}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+      // Self-Improvement tab
+      const stageIcons = { 'planned': 'circle-dashed', 'in-progress': 'loader', 'complete': 'check-circle-2' };
+      const stageStyles = { 'planned': 'text-white/40 bg-white/5', 'in-progress': 'text-green-400 bg-green-500/10', 'complete': 'text-green-300 bg-green-500/15' };
+      const priorityStyles = { 'high': 'text-amber-400', 'medium': 'text-white/50', 'low': 'text-white/30' };
+      html += `<div id="tab-self-improvement" class="tab-content ${activeTab === 'self-improvement' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="lightbulb" class="lucide-lg ${ic}"></i><span class="${n}">Self-Improvement</span></h2>
+        <div class="space-y-3">
+          ${ideasCache.map(i => `
+            <div class="dashboard-card rounded-xl p-5">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="${stageIcons[i.stage] || 'circle-dashed'}" class="lucide ${i.stage === 'in-progress' ? 'icon-lab' : 'text-white/30'}"></i>
+                  <h3 class="font-medium text-sm">${i.title}</h3>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="text-[10px] font-mono ${priorityStyles[i.priority] || 'text-white/30'}">${i.priority}</span>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded-full ${stageStyles[i.stage] || 'bg-white/5 text-white/30'}">${i.stage}</span>
+                </div>
+              </div>
+              <p class="text-xs text-white/40 ml-8">${i.description}</p>
+            </div>
+          `).join('')}
+          ${ideasCache.length === 0 ? '<div class="dashboard-card rounded-xl p-5 text-sm text-white/30">No ideas logged yet.</div>' : ''}
+        </div>
+      </div>`;
+
+      return html;
+    }
+
+    function renderBuildLogDetail(l) {
+      if (!l) return '<div class="text-white/20 text-sm">Select a build from the sidebar.</div>';
+      const ts = l.timestamp ? new Date(l.timestamp).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Sydney' }) : '--';
+      const sectionsHtml = (l.sections || []).map(s => `
+        <div class="mt-5">
+          <h4 class="text-xs font-medium text-white/40 uppercase tracking-wider mb-2">${s.heading}</h4>
+          <ul class="space-y-1">
+            ${(s.items || []).map(item => `
+              <li class="flex gap-2 items-start text-xs text-white/45">
+                <span class="text-green-400/40 mt-0.5 flex-shrink-0">&#8226;</span>
+                <span class="font-mono">${item.replace(/((?:\/[\w.-]+)+(?:\.\w+)?)/g, '<span style="color:rgba(255,255,255,0.65)">$1</span>')}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `).join('');
+      return `
+        <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center gap-3">
+            <span class="status-dot ${l.status === 'success' ? 'online' : l.status === 'failed' ? 'offline' : 'warning'}"></span>
+            <span class="font-medium text-lg text-white/70">${l.name || 'Build'}</span>
+            ${l.duration ? '<span class="text-xs font-mono text-white/25">' + l.duration + '</span>' : ''}
+          </div>
+          <span class="text-xs font-mono text-white/25">${ts}</span>
+        </div>
+        <p class="text-sm text-white/40 ml-5 mb-2">${l.summary || ''}</p>
+        <div class="ml-5">${sectionsHtml}</div>
+      `;
+    }
+
+    function selectBuildLog(id) {
+      const log = buildLogsCache.find(l => l.id === id);
+      const viewer = document.getElementById('build-log-viewer');
+      if (viewer) viewer.innerHTML = renderBuildLogDetail(log);
+      // Highlight active in sidebar
+      document.querySelectorAll('.build-log-item').forEach(el => {
+        const isActive = el.dataset.buildId === id;
+        el.classList.toggle('bg-white/8', isActive);
+        el.classList.toggle('border-l-2', isActive);
+        el.classList.toggle('border-green-400/40', isActive);
+      });
+      lucide.createIcons();
+    }
+
+    async function initDailyBriefs() {
+      await fetchBriefs();
+      const sidebar = document.getElementById('brief-sidebar');
+      if (!sidebar) return;
+      if (briefsCache.length === 0) {
+        sidebar.innerHTML = '<div class="text-xs text-white/20 px-2">No briefs yet.</div>';
+        return;
+      }
+      sidebar.innerHTML = briefsCache.map(b => {
+        const d = new Date(b.date + 'T00:00:00');
+        const dayName = d.toLocaleDateString('en-AU', { weekday: 'short' });
+        const dayNum = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+        return `
+          <div class="brief-item flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover:bg-white/5 transition text-xs" data-date="${b.date}" onclick="loadBrief('${b.date}')">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-white/5 flex flex-col items-center justify-center">
+              <span class="text-[9px] text-white/30 leading-none">${dayName}</span>
+              <span class="text-xs font-medium text-white/60 leading-tight">${d.getDate()}</span>
+            </div>
+            <div class="min-w-0">
+              <div class="text-white/50 truncate">${dayNum} ${d.getFullYear()}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+      // Auto-load latest
+      loadBrief(briefsCache[0].date);
+    }
+
+    function activateModule(moduleId) {
+      activeModule = moduleId;
+      activeTab = modules[moduleId].tabs.length ? modules[moduleId].tabs[0].id : 'dashboard';
+      document.querySelectorAll('.glass-dock-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.module === moduleId);
+      });
+      renderTabs();
+      renderModuleContent();
+      lucide.createIcons();
+      if (activeTab === 'daily-briefs') initDailyBriefs();
+      if (moduleId === 'brain' && !renderedModules['brain']) {
+        fetchBriefs().then(() => {
+          renderedModules['brain'] = false;
+          renderModuleContent();
+          lucide.createIcons();
+        });
+      }
+      if (moduleId === 'lab' && !renderedModules['lab']) {
+        fetchLabData().then(() => {
+          renderedModules['lab'] = false;
+          renderModuleContent();
+          lucide.createIcons();
+        });
+      }
+    }
+
+    function activateTab(tabId) {
+      activeTab = tabId;
+      const mod = modules[activeModule];
+      // Update tab bar highlights
+      document.querySelectorAll('.module-tab').forEach(el => {
+        const isActive = el.dataset.tab === tabId;
+        el.className = `module-tab px-4 py-1.5 rounded-lg flex items-center gap-2 text-sm ${isActive ? 'bg-white/10 ' + mod.neon : 'text-white/40'}`;
+      });
+      // Toggle tab content within current module wrapper
+      const wrapper = document.getElementById('module-' + activeModule);
+      if (wrapper) {
+        wrapper.querySelectorAll('.tab-content').forEach(el => {
+          // Match by id ending (tab-dashboard, tab-mission-control, etc.)
+          const matches = el.id === `${activeModule}-tab-${tabId}` || el.id === `tab-${tabId}`;
+          el.classList.toggle('active', matches);
+        });
+      }
+      lucide.createIcons();
+      if (tabId === 'daily-briefs') initDailyBriefs();
+      if (tabId === 'os-docs') initOsDocs();
+    }
+
+    async function openSession(sessionId) {
+      const session = sessionsData.find(s => s.sessionId === sessionId);
+      const overlay = document.getElementById('session-overlay');
+      const titleEl = document.getElementById('session-overlay-title');
+      const contentEl = document.getElementById('session-overlay-content');
+
+      titleEl.textContent = session ? (session.preview.slice(0, 50) || 'Session') : 'Session';
+      contentEl.innerHTML = '<div class="text-white/30 text-sm">Loading session history...</div>';
+      overlay.style.display = 'flex';
+
+      try {
+        const res = await fetch(`${API}/api/sessions/${sessionId}/history`);
+        const messages = await res.json();
+
+        let metaHtml = '';
+        if (session) {
+          metaHtml = `
+            <div class="grid grid-cols-3 gap-4 text-xs mb-4 pb-4 border-b border-white/8">
+              <div><span class="text-white/40">Model</span><br/><span class="font-mono">${session.model}</span></div>
+              <div><span class="text-white/40">Channel</span><br/>${session.channel}</div>
+              <div><span class="text-white/40">Messages</span><br/>${session.messageCount}</div>
+            </div>
+          `;
+        }
+
+        let historyHtml = '';
+        if (messages.length === 0) {
+          historyHtml = '<div class="text-white/20 text-sm">No messages in this session.</div>';
+        } else {
+          historyHtml = messages.map(m => {
+            const isUser = m.role === 'user';
+            const ts = m.timestamp ? new Date(m.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+            const escapedContent = m.content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g, '<br/>');
+            return `
+              <div class="flex gap-3 ${isUser ? '' : 'flex-row-reverse'} mb-3">
+                <div class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${isUser ? 'bg-white/10 text-white/60' : 'bg-amber-500/15 text-amber-400/80'}">
+                  ${isUser ? 'A' : 'G'}
+                </div>
+                <div class="max-w-[85%] rounded-xl px-4 py-3 ${isUser ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/[0.02] border border-white/[0.04]'}">
+                  <div class="text-[10px] text-white/25 mb-1.5 flex items-center gap-2 ${isUser ? '' : 'justify-end'}">
+                    <span>${isUser ? 'Albs' : 'Goat'}</span>
+                    ${ts ? '<span>' + ts + '</span>' : ''}
+                  </div>
+                  <div class="text-sm leading-relaxed ${isUser ? 'text-white/60' : 'text-white/50'} ${isUser ? 'text-left' : 'text-right'}">${escapedContent}</div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        contentEl.innerHTML = metaHtml + '<div class="space-y-1 macos-scroll" style="max-height:60vh;overflow-y:auto;padding-right:8px;">' + historyHtml + '</div>';
+      } catch (e) {
+        contentEl.innerHTML = `<div class="text-red-400/60 text-sm">Failed to load session history: ${e.message}</div>`;
+      }
+      lucide.createIcons();
+    }
+
+    function openPrototype(id) {
+      const proto = prototypesCache.find(p => p.id === id);
+      if (!proto) return;
+      document.getElementById('prototype-overlay-title').textContent = proto.name;
+      document.getElementById('prototype-overlay-meta').textContent = `port ${proto.port} \u00b7 ${proto.status}`;
+
+      const created = new Date(proto.createdAt).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      const updated = new Date(proto.updatedAt).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+      document.getElementById('prototype-detail').innerHTML = `
+        <div class="space-y-6">
+          <!-- Status bar -->
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-2 text-sm"><span class="status-dot ${proto.status === 'active' ? 'online' : 'offline'}"></span>${proto.status}</span>
+            <span class="text-xs font-mono text-white/25">port ${proto.port}</span>
+            <span class="text-xs font-mono text-white/25">${proto.entrypoint}</span>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <h4 class="text-xs text-white/30 uppercase tracking-wider mb-2">Description</h4>
+            <p class="text-sm text-white/55 leading-relaxed">${proto.description}</p>
+          </div>
+
+          <!-- Details grid -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="dashboard-card rounded-xl p-4">
+              <div class="text-xs text-white/30 mb-1">Created</div>
+              <div class="text-sm text-white/50 font-mono">${created}</div>
+            </div>
+            <div class="dashboard-card rounded-xl p-4">
+              <div class="text-xs text-white/30 mb-1">Last Updated</div>
+              <div class="text-sm text-white/50 font-mono">${updated}</div>
+            </div>
+            <div class="dashboard-card rounded-xl p-4">
+              <div class="text-xs text-white/30 mb-1">Path</div>
+              <div class="text-sm text-white/50 font-mono truncate">${proto.path}</div>
+            </div>
+            <div class="dashboard-card rounded-xl p-4">
+              <div class="text-xs text-white/30 mb-1">Entry Point</div>
+              <div class="text-sm text-white/50 font-mono">${proto.entrypoint}</div>
+            </div>
+          </div>
+
+          <!-- Placeholder for future: file tree, recent changes, live preview -->
+          <div class="dashboard-card rounded-xl p-5 border-dashed">
+            <div class="flex items-center gap-3 text-white/20">
+              <i data-lucide="monitor-play" class="lucide"></i>
+              <div>
+                <p class="text-sm">Live preview coming soon</p>
+                <p class="text-xs mt-0.5">Once routing is configured, prototypes will render here in real time.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('prototype-overlay').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function closePrototypeOverlay(e) {
+      if (e && e.target !== document.getElementById('prototype-overlay')) return;
+      document.getElementById('prototype-overlay').style.display = 'none';
+    }
+
+    function closeSessionOverlay(e) {
+      if (e && e.target !== document.getElementById('session-overlay')) return;
+      document.getElementById('session-overlay').style.display = 'none';
+    }
+    // Close on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeSessionOverlay(); closePrototypeOverlay(); }
+    });
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Australia/Sydney' });
+    }
+
+    // Hot-reload: watch for file changes via polling the file's last-modified header
+    let _lastModified = null;
+    async function checkForUpdates() {
+      try {
+        const res = await fetch(location.href, { method: 'HEAD', cache: 'no-store' });
+        const lm = res.headers.get('last-modified') || res.headers.get('etag');
+        if (_lastModified && lm && lm !== _lastModified) {
+          location.reload();
+        }
+        _lastModified = lm;
+      } catch (e) { /* ignore */ }
+    }
+    setInterval(checkForUpdates, 1500);
+    checkForUpdates();
+
+    // Fetch live data from API
+    async function fetchLiveData() {
+      try {
+        const res = await fetch(`${API}/api/sessions`);
+        const newData = await res.json();
+        const changed = JSON.stringify(newData) !== JSON.stringify(sessionsData);
+        sessionsData = newData;
+        // Re-render Ops whenever session data changes
+        if (changed && renderedModules['ops']) {
+          renderedModules['ops'] = false;
+          const prev = activeTab;
+          renderModuleContent();
+          lucide.createIcons();
+          // Restore tab if not on ops
+          if (activeModule !== 'ops') {
+            const opsWrapper = document.getElementById('module-ops');
+            if (opsWrapper) opsWrapper.style.display = 'none';
+            const curWrapper = document.getElementById('module-' + activeModule);
+            if (curWrapper) curWrapper.style.display = 'block';
+          }
+        }
+      } catch (e) { console.warn('API fetch failed:', e); }
+    }
+
+    // Init — fetch all data before first render so dashboards have real data
+    Promise.all([fetchLiveData(), fetchBriefs(), fetchLabData()]).then(() => {
+      activateModule('ops');
+    });
+    setInterval(fetchLiveData, 15000);
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>

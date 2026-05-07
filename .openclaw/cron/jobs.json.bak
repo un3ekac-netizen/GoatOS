@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "e1600945-83a4-452c-8b72-47accb02e063",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Rolling OS Docs",
+      "description": "Nightly analysis of GoatOS changes — updates OS documentation in Brain module",
+      "enabled": true,
+      "createdAtMs": 1778162796127,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 0 * * *",
+        "tz": "Australia/Sydney"
+      },
+      "sessionTarget": "current",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "You are running a scheduled overnight documentation task for GoatOS.\n\n1. Read /home/ubuntu/projects/goat-os/brain/os-docs/latest.md (current docs)\n2. Read /home/ubuntu/projects/goat-os/index.html and /home/ubuntu/projects/goat-os/api.mjs to understand current state\n3. Read /home/ubuntu/projects/goat-os/lab/build-logs/logs.json for recent build history\n4. Read /home/ubuntu/USER.md and /home/ubuntu/IDENTITY.md for context\n5. Rewrite /home/ubuntu/projects/goat-os/brain/os-docs/latest.md with a complete, updated documentation of the entire OS: architecture, every module, every tab, every feature, tech stack, design system, cron jobs, and any recent changes.\n6. Make sure the documentation is thorough but readable. Include the current date.\n7. Do NOT modify any other files. Documentation only.",
+        "timeoutSeconds": 300
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {}
+    },
+    {
+      "id": "7b698e62-c47d-47e1-acc4-6242e01ab894",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Bug Check",
+      "description": "Nightly bug scan of GoatOS codebase — fix issues and log results",
+      "enabled": true,
+      "createdAtMs": 1778162807288,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 2 * * *",
+        "tz": "Australia/Sydney"
+      },
+      "sessionTarget": "current",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "You are running a scheduled overnight bug check for GoatOS.\n\n1. Read /home/ubuntu/projects/goat-os/index.html and /home/ubuntu/projects/goat-os/api.mjs thoroughly\n2. Read /home/ubuntu/projects/goat-os/DESIGN.md for design rules\n3. Check for: broken JS logic, race conditions, missing null checks, CSS issues, API errors, data format mismatches, rendering bugs, accessibility issues\n4. Test the API by curling each endpoint: http://127.0.0.1:8766/api/sessions, /api/briefs, /api/os-docs, /api/prototypes, /api/overnight-builds, /api/build-logs, /api/ideas\n5. Fix any bugs you find directly in the source files\n6. After fixing, read /home/ubuntu/projects/goat-os/lab/build-logs/logs.json, then append a new build log entry with: id (bug-check-YYYY-MM-DD), name, status (success/failed), timestamp, duration, summary of what was found and fixed, and sections with headings 'Bugs Found', 'Fixes Applied', 'Files Modified'. If no bugs found, still log it as a clean scan.\n7. Write the updated logs.json back.\n8. Be careful — do NOT break working features. Test your fixes.",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {}
+    },
+    {
+      "id": "c94e8004-a71d-49bc-be86-b8b071deca6d",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Overnight Self-Improvement",
+      "description": "Audits one GoatOS module and builds one improvement overnight",
+      "enabled": true,
+      "createdAtMs": 1778162822836,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 3 * * *",
+        "tz": "Australia/Sydney"
+      },
+      "sessionTarget": "current",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "You are running a scheduled overnight self-improvement task for GoatOS.\n\nCONTEXT: Read these files first for full context:\n- /home/ubuntu/USER.md (who Albs is, what he cares about)\n- /home/ubuntu/IDENTITY.md (who you are)\n- /home/ubuntu/projects/goat-os/lab/PURPOSE.md (lab vision)\n- /home/ubuntu/projects/goat-os/DESIGN.md (design rules: no emojis, Lucide icons, Ubuntu fonts, module colours)\n- /home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json (current backlog)\n\nPROCESS:\n1. Pick ONE module to audit (rotate: check which was last audited in ideas.json or build logs)\n2. Read the full codebase: /home/ubuntu/projects/goat-os/index.html and /home/ubuntu/projects/goat-os/api.mjs\n3. Identify ONE high-value improvement that aligns with Albs' goals (efficiency, delegation, Hampr ROI, GoatOS vision)\n4. Build it. Implement the feature directly in the source files.\n5. Test it — make sure existing features still work. curl the API endpoints to verify.\n6. Update /home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json — mark the idea as complete or add the new one\n7. Read /home/ubuntu/projects/goat-os/lab/build-logs/logs.json, then append a build log entry with: id (self-improve-YYYY-MM-DD), name, status, timestamp, summary, and sections for 'What Was Built', 'Files Modified', 'Why This Matters'\n8. Write the updated logs.json back.\n\nRULES:\n- NEVER break existing features\n- Follow the design system strictly (DESIGN.md)\n- Keep changes focused — one improvement per night\n- If unsure about something, skip it and log why\n- Make sure the file watcher will auto-deploy your changes (write to /home/ubuntu/projects/goat-os/index.html)",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {}
+    },
+    {
+      "id": "19889f92-a19e-47f5-a68f-0b036bbe816b",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Daily Brief",
+      "description": "Morning brief with priorities, overnight summary, AI Pulse, and action items",
+      "enabled": true,
+      "createdAtMs": 1778162836859,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 6 * * *",
+        "tz": "Australia/Sydney"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "You are running a scheduled Daily Brief generation task for GoatOS.\n\nCONTEXT: Read these files first:\n- /home/ubuntu/USER.md (Albs' role, goals, context)\n- /home/ubuntu/IDENTITY.md (your identity)\n- /home/ubuntu/MEMORY.md (if it exists — long-term memory)\n- /home/ubuntu/projects/goat-os/lab/build-logs/logs.json (overnight build history)\n- /home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json (improvement backlog)\n\nTASK: Generate today's daily brief as a markdown file.\n\n1. Determine today's date in AEST (Australia/Sydney timezone)\n2. Create the file at /home/ubuntu/projects/goat-os/brain/daily-briefs/YYYY-MM-DD.md\n\nThe brief MUST include these sections:\n\n## Priorities\n- What Albs should focus on today based on context, recent work, and pending items\n\n## Overnight Summary\n- What cron jobs ran overnight (check build logs)\n- What was built/fixed/improved\n- Any failures or issues that need attention\n\n## Pending Action Items\n- Anything that failed overnight and needs manual intervention\n- Follow-ups from previous days\n\n## Completed\n- What was accomplished in the last 24 hours\n\n## AI Pulse\n- Search the web for the latest AI news from: OpenAI, Anthropic, Google DeepMind, Meta AI, Mistral, and other major AI companies\n- Focus on: new model releases, major product updates, research papers, industry shifts\n- Keep it concise — 3-5 bullet points of the most important developments\n- Include source URLs\n\n## Notes\n- Any other relevant context or observations\n\nFORMATTING:\n- Title: # Daily Brief — [Full day name], [Day] [Month] [Year]\n- Use **bold** for emphasis\n- Keep it scannable — Albs wants to glance at this over coffee\n- Do NOT use emojis",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {}
+    }
+  ]
+}

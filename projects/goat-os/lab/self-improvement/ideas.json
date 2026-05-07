@@ -1,0 +1,26 @@
+[
+  {
+    "id": "jira-integration",
+    "title": "Jira Board Integration",
+    "description": "Connect CEO's Jira project board to GoatOS so tasks can be delegated to agents automatically.",
+    "stage": "planned",
+    "priority": "high",
+    "createdAt": "2026-05-07T11:58:00Z"
+  },
+  {
+    "id": "multi-agent-hierarchy",
+    "title": "Multi-Agent Hierarchy",
+    "description": "Build out 2-3 direct-report agents under Goat, each with their own sub-agents. Project-based pods.",
+    "stage": "planned",
+    "priority": "high",
+    "createdAt": "2026-05-07T11:58:00Z"
+  },
+  {
+    "id": "daily-brief-cron",
+    "title": "Daily Brief Cron Job",
+    "description": "Automated morning brief generation with priorities, follow-ups, and completed tasks.",
+    "stage": "in-progress",
+    "priority": "high",
+    "createdAt": "2026-05-07T13:03:00Z"
+  }
+]

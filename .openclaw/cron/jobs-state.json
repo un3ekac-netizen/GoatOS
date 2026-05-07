@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "jobs": {
+    "e1600945-83a4-452c-8b72-47accb02e063": {
+      "updatedAtMs": 1778162966137,
+      "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 0 * * *\",\"tz\":\"Australia/Sydney\"}}",
+      "state": {
+        "nextRunAtMs": 1778248800000
+      }
+    },
+    "7b698e62-c47d-47e1-acc4-6242e01ab894": {
+      "updatedAtMs": 1778162970018,
+      "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"15 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
+      "state": {
+        "nextRunAtMs": 1778170500000
+      }
+    },
+    "c94e8004-a71d-49bc-be86-b8b071deca6d": {
+      "updatedAtMs": 1778162974046,
+      "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 3 * * *\",\"tz\":\"Australia/Sydney\"}}",
+      "state": {
+        "nextRunAtMs": 1778173200000
+      }
+    },
+    "19889f92-a19e-47f5-a68f-0b036bbe816b": {
+      "updatedAtMs": 1778162978173,
+      "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"30 6 * * *\",\"tz\":\"Australia/Sydney\"}}",
+      "state": {
+        "nextRunAtMs": 1778185800000
+      }
+    }
+  }
+}
