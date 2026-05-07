@@ -33,7 +33,8 @@
       "updatedAtMs": 1778163167903,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778169600000
+        "nextRunAtMs": 1778169600000,
+        "runningAtMs": 1778169600001
       }
     }
   }
