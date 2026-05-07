@@ -53,6 +53,12 @@
 - Tabs: static (no close button), draggable to reorder
 - Dashboard cards: clickable, navigate to full tab view
 
+## Paths & URLs
+
+- File paths and URLs always rendered in off-white: `rgba(255,255,255,0.75)`
+- Applied globally via `.path-text` CSS class and `highlightPaths()` utility
+- Covers: build logs, session history, automation prompts, markdown content
+
 ## Status Indicators
 
 - Online: `#4ade80` with subtle glow

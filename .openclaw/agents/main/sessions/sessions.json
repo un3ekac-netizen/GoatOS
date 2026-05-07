@@ -1,9 +1,9 @@
 {
   "agent:main:main": {
     "sessionId": "b03d9a86-372a-4cc4-b560-59bcfcfd8f9d",
-    "updatedAt": 1778164637475,
+    "updatedAt": 1778167415418,
     "sessionStartedAt": 1778147626350,
-    "lastInteractionAt": 1778164636234,
+    "lastInteractionAt": 1778167414113,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -59,10 +59,10 @@
       "version": 0
     },
     "status": "running",
-    "startedAt": 1778164637474,
+    "startedAt": 1778167415418,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1778164402086,
+      "generatedAt": 1778167318196,
       "sessionId": "b03d9a86-372a-4cc4-b560-59bcfcfd8f9d",
       "sessionKey": "agent:main:main",
       "provider": "abacus",
@@ -334,12 +334,12 @@
         ]
       }
     },
-    "inputTokens": 13,
-    "outputTokens": 3474,
-    "cacheRead": 169421,
-    "cacheWrite": 336,
-    "estimatedCostUsd": 1.03304825,
-    "totalTokens": 169758,
+    "inputTokens": 4,
+    "outputTokens": 764,
+    "cacheRead": 205570,
+    "cacheWrite": 710,
+    "estimatedCostUsd": 0.22931725,
+    "totalTokens": 206281,
     "totalTokensFresh": true,
     "providerOverride": "abacus",
     "modelOverride": "claude-opus-4-6",
