@@ -89,7 +89,7 @@
         "expr": "30 6 * * *",
         "tz": "Australia/Sydney"
       },
-      "sessionTarget": "isolated",
+      "sessionTarget": "current",
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",

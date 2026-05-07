@@ -100,6 +100,32 @@
         "mode": "none"
       },
       "state": {}
+    },
+    {
+      "id": "be5ce0eb-8b1e-4827-b7b0-bbf213fb6259",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Repo Backup",
+      "description": "Nightly backup of entire workspace to private GitHub repo (secrets excluded)",
+      "enabled": true,
+      "createdAtMs": 1778163167903,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 2 * * *",
+        "tz": "Australia/Sydney"
+      },
+      "sessionTarget": "session:agent:main:main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "You are running a scheduled nightly backup of the GoatOS workspace to GitHub.\n\nPROCESS:\n1. cd /home/ubuntu\n2. Run: git add -A\n3. Check git status — if there are changes, commit with message: \"Nightly backup — [YYYY-MM-DD]\" with a brief summary of what changed\n4. If no changes, skip the commit\n5. Run: git push origin main\n6. Verify the push succeeded\n\nRULES:\n- The .gitignore is already configured to exclude secrets (openclaw.json, .git-credentials, API tokens, session logs, etc.)\n- Do NOT modify the .gitignore\n- Do NOT commit if there are no changes\n- If push fails, log the error but do not retry more than once\n- Do NOT modify any source files — this is a backup job only",
+        "timeoutSeconds": 120
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {},
+      "updatedAtMs": 1778164481595
     }
   ]
 }

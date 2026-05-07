@@ -1,46 +1,64 @@
-# Secrets and tokens
-.openclaw/openclaw.json
-.openclaw/agents/*/sessions/*.jsonl
-.openclaw/agents/*/sessions/*.trajectory.jsonl
-.openclaw/canvas/
-.env
+# === GoatOS Backup — Private Repo ===
+# This repo is for disaster recovery. Include everything
+# needed to restore a full OpenClaw instance.
+
+# --- ALWAYS EXCLUDE (true secrets) ---
+.git-credentials
 *.env
 .env.*
-**/secrets/
-**/credentials/
-.git-credentials
 
-# Logs and temp
-*.log
-/tmp/
-nohup.out
-
-# Node / npm
+# --- Exclude ephemeral/regenerable files ---
 node_modules/
 .npm/
 .npm-global/
 .npmrc
+*.log
+nohup.out
+/tmp/
 
-# System files
+# --- Exclude system junk ---
 .DS_Store
 Thumbs.db
+
+# --- Exclude host-specific files (regenerated on new instance) ---
 .Xdefaults
 .bashrc
 .config/
 .local/
 .gitconfig
 backup-*/
+
+# --- Exclude large ephemeral OpenClaw data ---
+# Session transcripts (large, regenerated per conversation)
+.openclaw/agents/*/sessions/*.jsonl
+.openclaw/agents/*/sessions/*.trajectory.jsonl
+.openclaw/agents/*/sessions/*.bak-*
+.openclaw/agents/*/sessions/*.lock
+.openclaw/agents/*/sessions/*.trajectory-path.json
+# Canvas build artifacts (regenerated from source)
+.openclaw/canvas/
+# Task run history (ephemeral)
+.openclaw/tasks/
+# Runtime logs
+.openclaw/logs/
+# Update check cache
+.openclaw/update-check.json
+# Codex internal runtime (large, regenerated)
+.openclaw/agents/*/agent/codex-home/logs_*.sqlite*
+.openclaw/agents/*/agent/codex-home/state_*.sqlite*
+.openclaw/agents/*/agent/codex-home/tmp/
+.openclaw/agents/*/agent/codex-home/.personality_migration
+.openclaw/agents/*/agent/codex-home/skills/.system/
+
+# --- INCLUDE (needed for restore) ---
+# .openclaw/openclaw.json         (main config)
+# .openclaw/agents/*/agent/models.json (model routing)
+# .openclaw/cron/                  (cron job definitions)
+# .openclaw/devices/               (paired device config)
+# .openclaw/identity/              (device identity)
+# .openclaw/workspace-state.json   (workspace state)
+# All project files, memory, agents, skills
 .openclaw/workspace/
-.openclaw/agents/main/agent/
-.openclaw/models.json
-.openclaw/agents/main/sessions/*.bak-*
-.openclaw/identity/
-.openclaw/devices/
-.openclaw/exec-approvals.json
 .openclaw/openclaw.json.bak*
 .openclaw/openclaw.json.last-good
-.openclaw/tasks/
-.openclaw/update-check.json
-.openclaw/logs/
-.openclaw/agents/main/sessions/*.lock
-.openclaw/agents/main/sessions/*.trajectory-path.json
+.openclaw/exec-approvals.json

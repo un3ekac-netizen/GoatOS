@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { execSync } from 'child_process';
-import { readFileSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 const PORT = 8766;
@@ -98,12 +98,7 @@ function getSessionHistory(sessionFile) {
   return messages;
 }
 
-function getCronJobs() {
-  try {
-    const out = execSync('openclaw cron list --json 2>/dev/null', { timeout: 10000 }).toString();
-    return JSON.parse(out);
-  } catch { return { jobs: [] }; }
-}
+// Old getCronJobs removed — replaced by file-based version below
 
 function getStatus() {
   try {
@@ -149,6 +144,23 @@ function getOvernightBuilds() {
   } catch { return []; }
 }
 
+function getCronJobs() {
+  try {
+    const raw = JSON.parse(readFileSync('/home/ubuntu/.openclaw/cron/jobs.json', 'utf-8'));
+    const jobs = Array.isArray(raw) ? raw : (raw.jobs || []);
+    let stateMap = {};
+    try {
+      const stateRaw = JSON.parse(readFileSync('/home/ubuntu/.openclaw/cron/jobs-state.json', 'utf-8'));
+      // State file uses { jobs: { [id]: { state: {...} } } }
+      stateMap = stateRaw.jobs || {};
+    } catch {}
+    return jobs.map(j => {
+      const s = stateMap[j.id] || {};
+      return { ...j, state: s.state || j.state || {} };
+    });
+  } catch (err) { console.error('getCronJobs failed:', err.message); return []; }
+}
+
 function getOsDocs() {
   try {
     return readFileSync('/home/ubuntu/projects/goat-os/brain/os-docs/latest.md', 'utf-8');
@@ -172,7 +184,7 @@ const server = createServer((req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
       'Access-Control-Allow-Headers': '*',
     });
     return res.end();
@@ -206,6 +218,31 @@ const server = createServer((req, res) => {
       jsonResponse(res, getIdeas());
     } else if (path === '/api/cron') {
       jsonResponse(res, getCronJobs());
+    } else if (path === '/api/cron/detail') {
+      jsonResponse(res, getCronJobs());
+    } else if (path.startsWith('/api/cron/') && path.endsWith('/toggle') && req.method === 'PATCH') {
+      const jobId = path.replace('/api/cron/', '').replace('/toggle', '');
+      // Read current jobs, toggle enabled, write back
+      try {
+        const raw = JSON.parse(readFileSync('/home/ubuntu/.openclaw/cron/jobs.json', 'utf-8'));
+        const jobs = raw.jobs || [];
+        const job = jobs.find(j => j.id === jobId);
+        if (!job) { jsonResponse(res, { error: 'Job not found' }, 404); return; }
+        // Read request body for desired state
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+          try {
+            const { enabled } = JSON.parse(body);
+            job.enabled = !!enabled;
+            job.updatedAtMs = Date.now();
+            raw.jobs = jobs;
+            writeFileSync('/home/ubuntu/.openclaw/cron/jobs.json', JSON.stringify(raw, null, 2));
+            jsonResponse(res, { id: jobId, enabled: job.enabled });
+          } catch (e) { jsonResponse(res, { error: e.message }, 400); }
+        });
+        return;
+      } catch (e) { jsonResponse(res, { error: e.message }, 500); }
     } else if (path === '/api/status') {
       jsonResponse(res, getStatus());
     } else {

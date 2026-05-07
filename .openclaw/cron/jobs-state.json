@@ -28,6 +28,13 @@
       "state": {
         "nextRunAtMs": 1778185800000
       }
+    },
+    "be5ce0eb-8b1e-4827-b7b0-bbf213fb6259": {
+      "updatedAtMs": 1778163167903,
+      "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
+      "state": {
+        "nextRunAtMs": 1778169600000
+      }
     }
   }
 }

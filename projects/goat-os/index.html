@@ -269,6 +269,7 @@
         tabs: [
           { id: 'dashboard', name: 'Dashboard', icon: 'layout-dashboard' },
           { id: 'daily-briefs', name: 'Daily Briefs', icon: 'newspaper' },
+          { id: 'automations', name: 'Automations', icon: 'workflow' },
           { id: 'os-docs', name: 'OS Docs', icon: 'book-open' }
         ]
       },
@@ -426,15 +427,15 @@
             <div class="space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-xs text-white/40">Total</span>
-                <span class="text-xs font-semibold">0</span>
+                <span class="text-xs font-semibold">${cronCache.length}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-xs text-white/40">Healthy</span>
-                <span class="flex items-center gap-1.5 text-xs"><span class="status-dot online"></span>0</span>
+                <span class="text-xs text-white/40">Enabled</span>
+                <span class="flex items-center gap-1.5 text-xs"><span class="status-dot online"></span>${cronCache.filter(c => c.enabled).length}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-xs text-white/40">Failed</span>
-                <span class="flex items-center gap-1.5 text-xs"><span class="status-dot offline"></span>0</span>
+                <span class="text-xs text-white/40">Disabled</span>
+                <span class="flex items-center gap-1.5 text-xs"><span class="status-dot offline"></span>${cronCache.filter(c => !c.enabled).length}</span>
               </div>
             </div>
           </div>
@@ -492,7 +493,22 @@
         <div class="dashboard-card rounded-xl p-5">
           <table class="w-full text-sm font-mono">
             <thead><tr class="text-white/30 border-b border-white/8"><th class="text-left py-2 px-3">Name</th><th class="text-left py-2 px-3">Schedule</th><th class="text-left py-2 px-3">Status</th><th class="text-left py-2 px-3">Last Run</th></tr></thead>
-            <tbody><tr><td colspan="4" class="py-4 text-center text-white/20">No cron jobs configured</td></tr></tbody>
+            <tbody>
+              ${cronCache.length > 0 ? cronCache.map(c => {
+                const nextRun = c.state?.nextRunAtMs ? new Date(c.state.nextRunAtMs).toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Sydney' }) : '--';
+                return `<tr class="border-b border-white/5 hover:bg-white/3">
+                  <td class="py-2 px-3 text-white/50">${c.name}</td>
+                  <td class="py-2 px-3 text-white/40">${c.schedule.expr} (${c.schedule.tz || 'UTC'})</td>
+                  <td class="py-2 px-3">
+                    <select class="bg-white/5 border border-white/10 rounded-lg text-xs px-2 py-1 text-white/60 cursor-pointer outline-none" onchange="toggleCron('${c.id}', this.value === 'enabled')" style="appearance:auto; -webkit-appearance:auto;">
+                      <option value="enabled" ${c.enabled ? 'selected' : ''} class="bg-neutral-900">Enabled</option>
+                      <option value="disabled" ${!c.enabled ? 'selected' : ''} class="bg-neutral-900">Disabled</option>
+                    </select>
+                  </td>
+                  <td class="py-2 px-3 text-white/30">${nextRun}</td>
+                </tr>`;
+              }).join('') : '<tr><td colspan="4" class="py-4 text-center text-white/20">No cron jobs configured</td></tr>'}
+            </tbody>
           </table>
         </div>
       </div>`;
@@ -502,7 +518,49 @@
       // Cron Health tab
       html += `<div id="tab-cron-health" class="tab-content ${activeTab === 'cron-health' ? 'active' : ''}">
         <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="clock" class="lucide-lg icon-ops"></i><span class="neon-ops">Cron Health</span></h2>
-        <div class="dashboard-card rounded-xl p-5"><p class="text-white/40">Detailed cron monitoring coming soon.</p></div></div>`;
+        <!-- Summary bar -->
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="dashboard-card rounded-xl p-4 text-center">
+            <div class="text-2xl font-light neon-ops">${cronCache.length}</div>
+            <div class="text-xs text-white/30 mt-1">Total Jobs</div>
+          </div>
+          <div class="dashboard-card rounded-xl p-4 text-center">
+            <div class="text-2xl font-light text-green-400">${cronCache.filter(c => c.enabled).length}</div>
+            <div class="text-xs text-white/30 mt-1">Enabled</div>
+          </div>
+          <div class="dashboard-card rounded-xl p-4 text-center">
+            <div class="text-2xl font-light text-red-400">${cronCache.filter(c => !c.enabled).length}</div>
+            <div class="text-xs text-white/30 mt-1">Disabled</div>
+          </div>
+        </div>
+        <!-- Job list -->
+        <div class="dashboard-card rounded-xl p-5">
+          <table class="w-full text-sm font-mono">
+            <thead><tr class="text-white/30 border-b border-white/8">
+              <th class="text-left py-2 px-3">Status</th>
+              <th class="text-left py-2 px-3">Name</th>
+              <th class="text-left py-2 px-3">Schedule</th>
+              <th class="text-left py-2 px-3">Next Run</th>
+              <th class="text-left py-2 px-3">Last Run</th>
+              <th class="text-left py-2 px-3">Target</th>
+            </tr></thead>
+            <tbody>
+              ${cronCache.length > 0 ? cronCache.map(c => {
+                const nextRun = c.state?.nextRunAtMs ? new Date(c.state.nextRunAtMs).toLocaleString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Sydney' }) : '--';
+                const lastRun = c.state?.lastRunAtMs ? new Date(c.state.lastRunAtMs).toLocaleString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Sydney' }) : 'Never';
+                return '<tr class="border-b border-white/5 hover:bg-white/3">' +
+                  '<td class="py-2.5 px-3"><span class="flex items-center gap-1.5"><span class="status-dot ' + (c.enabled ? 'online' : 'offline') + '"></span>' + (c.enabled ? 'OK' : 'Off') + '</span></td>' +
+                  '<td class="py-2.5 px-3 text-white/60">' + c.name + '</td>' +
+                  '<td class="py-2.5 px-3 text-white/40">' + c.schedule.expr + ' <span class="text-white/20">' + (c.schedule.tz || '') + '</span></td>' +
+                  '<td class="py-2.5 px-3 text-white/40">' + nextRun + '</td>' +
+                  '<td class="py-2.5 px-3 text-white/30">' + lastRun + '</td>' +
+                  '<td class="py-2.5 px-3 text-white/30">' + (c.sessionTarget || 'isolated') + '</td>' +
+                '</tr>';
+              }).join('') : '<tr><td colspan="6" class="py-4 text-center text-white/20">No cron jobs configured</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
       return html;
     }
 
@@ -513,6 +571,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           ${featureTabs.map(tab => {
             let preview = '<p class="text-xs text-white/25 font-mono">No data yet</p>';
+            if (tab.id === 'automations') {
+              preview = '<div class="flex items-center gap-2 mt-1"><i data-lucide="activity" class="icon-brain" style="width:14px;height:14px;"></i><span class="text-xs text-white/40">' + cronCache.length + ' cron jobs configured</span></div>';
+            }
             if (tab.id === 'os-docs') {
               preview = '<div class="flex items-center gap-2 mt-1"><i data-lucide="file-text" class="icon-brain" style="width:14px;height:14px;"></i><span class="text-xs text-white/40">Updated nightly at midnight</span></div>';
             }
@@ -613,6 +674,55 @@
         </div>
       </div>`;
 
+      // Automations tab
+      html += `<div id="tab-automations" class="tab-content ${activeTab === 'automations' ? 'active' : ''}">
+        <h2 class="text-2xl font-light mb-6 flex items-center gap-3"><i data-lucide="workflow" class="lucide-lg icon-brain"></i><span class="neon-brain">Automations</span></h2>
+        <div class="space-y-4">
+          ${cronCache.length > 0 ? cronCache.map(c => {
+            const nextRun = c.state?.nextRunAtMs ? new Date(c.state.nextRunAtMs).toLocaleString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Sydney' }) : '--';
+            const lastRun = c.state?.lastRunAtMs ? new Date(c.state.lastRunAtMs).toLocaleString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Sydney' }) : 'Never';
+            // Truncate long messages for display
+            const msgPreview = (c.payload?.message || '').split('\n').filter(l => l.trim()).slice(0, 8).join('\n');
+            return `
+              <div class="dashboard-card rounded-xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <span class="status-dot ${c.enabled ? 'online' : 'offline'}"></span>
+                    <h3 class="font-medium text-sm">${c.name}</h3>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full ${c.enabled ? 'bg-sky-500/10 text-sky-400' : 'bg-white/5 text-white/30'}">${c.enabled ? 'enabled' : 'disabled'}</span>
+                  </div>
+                  <span class="text-[10px] font-mono text-white/20">${c.id?.slice(0, 8) || '--'}</span>
+                </div>
+                ${c.description ? '<p class="text-xs text-white/40 mb-3">' + c.description + '</p>' : ''}
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                  <div class="bg-white/3 rounded-lg p-3">
+                    <div class="text-[10px] text-white/30 mb-0.5">Schedule</div>
+                    <div class="text-xs font-mono text-white/60">${c.schedule.expr}</div>
+                    <div class="text-[10px] font-mono text-white/25">${c.schedule.tz || 'UTC'}</div>
+                  </div>
+                  <div class="bg-white/3 rounded-lg p-3">
+                    <div class="text-[10px] text-white/30 mb-0.5">Next Run</div>
+                    <div class="text-xs font-mono text-white/60">${nextRun}</div>
+                  </div>
+                  <div class="bg-white/3 rounded-lg p-3">
+                    <div class="text-[10px] text-white/30 mb-0.5">Last Run</div>
+                    <div class="text-xs font-mono text-white/60">${lastRun}</div>
+                  </div>
+                  <div class="bg-white/3 rounded-lg p-3">
+                    <div class="text-[10px] text-white/30 mb-0.5">Target</div>
+                    <div class="text-xs font-mono text-white/60">${c.sessionTarget || 'isolated'}</div>
+                  </div>
+                </div>
+                <details class="group">
+                  <summary class="text-[10px] text-white/30 cursor-pointer hover:text-white/50 transition">View prompt definition</summary>
+                  <pre class="mt-2 text-[11px] font-mono text-white/35 bg-white/3 rounded-lg p-3 whitespace-pre-wrap leading-relaxed macos-scroll" style="max-height:200px;overflow-y:auto;">${msgPreview.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+                </details>
+              </div>
+            `;
+          }).join('') : '<div class="dashboard-card rounded-xl p-5 text-sm text-white/30">No automations configured.</div>'}
+        </div>
+      </div>`;
+
       html += `<div id="tab-daily-briefs" class="tab-content ${activeTab === 'daily-briefs' ? 'active' : ''}">
         <div class="flex gap-3" style="height: calc(100vh - 170px);">
           <!-- Left sidebar: brief history -->
@@ -634,6 +744,7 @@
     }
 
     // Lab data caches
+    let cronCache = [];
     let prototypesCache = [];
     let buildsCache = [];
     let buildLogsCache = [];
@@ -973,6 +1084,14 @@
       lucide.createIcons();
       if (tabId === 'daily-briefs') initDailyBriefs();
       if (tabId === 'os-docs') initOsDocs();
+      if (tabId === 'automations') fetchCronData().then(() => {
+        // Re-render automations tab with fresh data
+        if (renderedModules['brain']) {
+          renderedModules['brain'] = false;
+          renderModuleContent();
+          lucide.createIcons();
+        }
+      });
     }
 
     async function openSession(sessionId) {
@@ -1152,7 +1271,29 @@
     }
 
     // Init — fetch all data before first render so dashboards have real data
-    Promise.all([fetchLiveData(), fetchBriefs(), fetchLabData()]).then(() => {
+    async function toggleCron(jobId, enabled) {
+      try {
+        await fetch(`${API}/api/cron/${jobId}/toggle`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled })
+        });
+        // Refresh cron data and re-render
+        await fetchCronData();
+        renderedModules['ops'] = false;
+        renderModuleContent();
+        lucide.createIcons();
+      } catch (e) { console.error('Toggle cron failed:', e); }
+    }
+
+    async function fetchCronData() {
+      try {
+        const res = await fetch(`${API}/api/cron`);
+        cronCache = await res.json();
+      } catch (e) { console.warn('Cron fetch failed:', e); }
+    }
+
+    Promise.all([fetchLiveData(), fetchBriefs(), fetchLabData(), fetchCronData()]).then(() => {
       activateModule('ops');
     });
     setInterval(fetchLiveData, 15000);
