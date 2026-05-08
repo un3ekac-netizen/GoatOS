@@ -317,6 +317,11 @@ const server = createServer((req, res) => {
           jsonResponse(res, { error: 'file not found' }, 404);
         }
       } catch (e) { jsonResponse(res, { error: e.message }, 500); }
+    } else if (path === '/api/delegate' && req.method === 'POST') {
+      import('/home/ubuntu/projects/goat-os/ops/delegate.mjs').then(({ runDelegation }) => {
+        runDelegation().then(result => jsonResponse(res, result)).catch(e => jsonResponse(res, { error: e.message }, 500));
+      }).catch(e => jsonResponse(res, { error: e.message }, 500));
+      return;
     } else if (path === '/api/delegation-queue') {
       try { jsonResponse(res, JSON.parse(readFileSync('/home/ubuntu/projects/goat-os/ops/delegation-queue.json', 'utf-8'))); }
       catch { jsonResponse(res, []); }

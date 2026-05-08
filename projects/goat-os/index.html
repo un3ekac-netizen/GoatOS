@@ -823,16 +823,14 @@
 
           <!-- TIER 2: Direct Report Agents -->
           <div class="grid grid-cols-4 gap-5 w-full max-w-4xl mt-8">
-            <!-- Ops Agent -->
+            <!-- Castle — Chief Operating Officer -->
             <div class="flex flex-col items-center gap-0">
               <div class="org-node agent rounded-xl px-5 py-4 text-center w-full">
-                <div class="flex items-center justify-center gap-2 mb-1">
-                  <i data-lucide="briefcase" class="lucide icon-brain"></i>
-                  <span class="font-medium text-sm">Ops Agent</span>
-                </div>
-                <div class="text-[10px] text-white/55 font-mono">Hampr Operations</div>
+                <img src="avatar-castle.png" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-sky-400/40 object-cover" />
+                <span class="font-medium text-sm">Castle</span>
+                <div class="text-[10px] text-white/55 font-mono mt-0.5">Chief Operating Officer</div>
                 <div class="text-[10px] text-white/45 mt-1.5">Jira pipeline, cross-dept alignment, task execution</div>
-                <div class="text-[10px] text-white/40 font-mono mt-2">Not configured</div>
+                <div class="text-[10px] text-sky-300/50 font-mono mt-2">Handles: Operational tasks</div>
               </div>
               <div class="w-px h-6 pulse-line"></div>
               <!-- Sub-agents -->
@@ -848,16 +846,14 @@
               </div>
             </div>
 
-            <!-- Builder Agent -->
+            <!-- Forge — Chief Technology Officer -->
             <div class="flex flex-col items-center gap-0">
               <div class="org-node agent rounded-xl px-5 py-4 text-center w-full">
-                <div class="flex items-center justify-center gap-2 mb-1">
-                  <i data-lucide="hammer" class="lucide icon-brain"></i>
-                  <span class="font-medium text-sm">Builder Agent</span>
-                </div>
-                <div class="text-[10px] text-white/55 font-mono">GoatOS Development</div>
+                <img src="avatar-forge.png" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-sky-400/40 object-cover" />
+                <span class="font-medium text-sm">Forge</span>
+                <div class="text-[10px] text-white/55 font-mono mt-0.5">Chief Technology Officer</div>
                 <div class="text-[10px] text-white/45 mt-1.5">Technical builds, overnight improvements, bug fixes</div>
-                <div class="text-[10px] text-white/40 font-mono mt-2">Not configured</div>
+                <div class="text-[10px] text-sky-300/50 font-mono mt-2">Handles: Code tasks</div>
               </div>
               <div class="w-px h-6 pulse-line"></div>
               <!-- Sub-agents -->
@@ -877,16 +873,14 @@
               </div>
             </div>
 
-            <!-- Intel Agent -->
+            <!-- Echo — Chief Strategy Officer -->
             <div class="flex flex-col items-center gap-0">
               <div class="org-node agent rounded-xl px-5 py-4 text-center w-full">
-                <div class="flex items-center justify-center gap-2 mb-1">
-                  <i data-lucide="radar" class="lucide icon-brain"></i>
-                  <span class="font-medium text-sm">Intel Agent</span>
-                </div>
-                <div class="text-[10px] text-white/55 font-mono">Research & Intelligence</div>
+                <img src="avatar-echo.png" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-sky-400/40 object-cover" />
+                <span class="font-medium text-sm">Echo</span>
+                <div class="text-[10px] text-white/55 font-mono mt-0.5">Chief Strategy Officer</div>
                 <div class="text-[10px] text-white/45 mt-1.5">AI Pulse, market research, competitive analysis</div>
-                <div class="text-[10px] text-white/40 font-mono mt-2">Not configured</div>
+                <div class="text-[10px] text-sky-300/50 font-mono mt-2">Handles: Research/Analysis</div>
               </div>
               <div class="w-px h-6 pulse-line"></div>
               <!-- Sub-agents -->
@@ -902,16 +896,14 @@
               </div>
             </div>
 
-            <!-- Creative Lead -->
+            <!-- Vector — Chief Marketing Officer -->
             <div class="flex flex-col items-center gap-0">
               <div class="org-node agent rounded-xl px-5 py-4 text-center w-full">
-                <div class="flex items-center justify-center gap-2 mb-1">
-                  <i data-lucide="palette" class="lucide icon-brain"></i>
-                  <span class="font-medium text-sm">Creative Lead</span>
-                </div>
-                <div class="text-[10px] text-white/55 font-mono">Design & Content</div>
+                <img src="avatar-vector.png" class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-sky-400/40 object-cover" />
+                <span class="font-medium text-sm">Vector</span>
+                <div class="text-[10px] text-white/55 font-mono mt-0.5">Chief Marketing Officer</div>
                 <div class="text-[10px] text-white/45 mt-1.5">Product design, copy, SEO, visual assets</div>
-                <div class="text-[10px] text-white/40 font-mono mt-2">Not configured</div>
+                <div class="text-[10px] text-sky-300/50 font-mono mt-2">Handles: Marketing, Copy, Writing</div>
               </div>
               <div class="w-px h-6 pulse-line"></div>
               <!-- Sub-agents -->
@@ -1219,20 +1211,36 @@
       btn.classList.add('syncing');
       btn.querySelector('.sync-label').textContent = 'Syncing...';
       try {
+        // Step 1: Sync from Jira
         const res = await fetch(`${API}/api/jira/sync`, { method: 'POST' });
         const data = await res.json();
         if (data.error) {
           showToast('error', 'Jira Sync Failed', data.error);
-        } else {
-          const queueMsg = data.queued > 0 ? ` · ${data.queued} queued for delegation` : '';
-          showToast('success', 'Jira Sync Complete', `${data.synced} issues found · ${data.created} created · ${data.updated} updated${queueMsg}`);
-          // Refresh pipeline data and re-render
-          await fetchPipelineData();
-          renderedModules['projects'] = false;
-          renderModuleContent();
-          renderTabs();
-          lucide.createIcons();
+          btn.classList.remove('syncing');
+          btn.querySelector('.sync-label').textContent = 'Sync from Jira';
+          return;
         }
+        const queueMsg = data.queued > 0 ? ` · ${data.queued} queued for delegation` : '';
+        showToast('success', 'Jira Sync Complete', `${data.synced} issues found · ${data.created} created · ${data.updated} updated${queueMsg}`);
+
+        // Step 2: Trigger delegation if new tasks were queued
+        if (data.queued > 0) {
+          btn.querySelector('.sync-label').textContent = 'Delegating...';
+          const delRes = await fetch(`${API}/api/delegate`, { method: 'POST' });
+          const delData = await delRes.json();
+          if (delData.error) {
+            showToast('error', 'Delegation Failed', delData.error);
+          } else {
+            showToast('success', 'Tasks Delegated', `${delData.delegated} task${delData.delegated !== 1 ? 's' : ''} assigned to agents`);
+          }
+        }
+
+        // Refresh pipeline data and re-render
+        await fetchPipelineData();
+        renderedModules['projects'] = false;
+        renderModuleContent();
+        renderTabs();
+        lucide.createIcons();
       } catch (e) {
         showToast('error', 'Jira Sync Failed', e.message);
       } finally {
