@@ -564,8 +564,8 @@
 
     // Live session data (populated from API)
     let sessionsData = [];
-    const THREE_HOURS_MS = 3 * 60 * 60 * 1000;
-    function recentSessions() { const cutoff = Date.now() - THREE_HOURS_MS; return sessionsData.filter(s => s.updatedAt >= cutoff); }
+    const TEN_MINUTES_MS = 10 * 60 * 1000;
+    function recentSessions() { const cutoff = Date.now() - TEN_MINUTES_MS; return sessionsData.filter(s => s.updatedAt >= cutoff); }
 
     function renderTabs() {
       const bar = document.getElementById('tab-bar');
