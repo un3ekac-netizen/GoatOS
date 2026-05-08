@@ -4,7 +4,7 @@
 
 | Agent | Name | Role | Avatar | Handles | Status |
 |-------|------|------|--------|---------|--------|
-| **Castle** | Castle | Chief Strategy Officer | `avatar-castle.png` | Operational tasks (SOPs, checklists, process docs) | Not configured — uses main agent |
+| **Castle** | Castle | Chief Strategy Officer | `avatar-castle.png` | Strategic planning, operational docs, SOPs | Not configured — uses main agent |
 | **Forge** | Forge | Chief Technology Officer | `avatar-forge.png` | Code tasks (.js, .py, .ts, etc.) | Not configured — uses main agent |
 | **Echo** | Echo | Chief Intelligence Officer | `avatar-echo.png` | Research/Analysis (reports, market research) | Not configured — uses main agent |
 | **Vector** | Vector | Chief Marketing Officer | `avatar-vector.png` | Marketing, Copy, Writing (JDs, campaigns, copy) | Not configured — uses main agent |
