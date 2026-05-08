@@ -53,18 +53,17 @@
       }
     },
     "be5ce0eb-8b1e-4827-b7b0-bbf213fb6259": {
-      "updatedAtMs": 1778201570487,
+      "updatedAtMs": 1778219986101,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
         "nextRunAtMs": 1778256000000,
-        "lastRunAtMs": 1778169600003,
+        "lastRunAtMs": 1778219973000,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 26232,
+        "lastDurationMs": 13101,
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 0,
-        "consecutiveSkipped": 0,
-        "runningAtMs": 1778219973000
+        "consecutiveSkipped": 0
       }
     },
     "fb72006a-22b4-44a9-950a-c616e1857afa": {
