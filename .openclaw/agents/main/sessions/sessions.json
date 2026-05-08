@@ -1,9 +1,9 @@
 {
   "agent:main:main": {
     "sessionId": "43ebc865-594d-43fb-b532-17c26199f365",
-    "updatedAt": 1778219911381,
+    "updatedAt": 1778219967770,
     "sessionStartedAt": 1778212912346,
-    "lastInteractionAt": 1778219909910,
+    "lastInteractionAt": 1778219966341,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -59,10 +59,10 @@
       "version": 0
     },
     "status": "running",
-    "startedAt": 1778219911316,
+    "startedAt": 1778219967707,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1778219783161,
+      "generatedAt": 1778219911181,
       "sessionId": "43ebc865-594d-43fb-b532-17c26199f365",
       "sessionKey": "agent:main:main",
       "provider": "abacus",
@@ -335,11 +335,11 @@
       }
     },
     "inputTokens": 0,
-    "outputTokens": 1910,
-    "cacheRead": 120064,
+    "outputTokens": 306,
+    "cacheRead": 120576,
     "cacheWrite": 0,
-    "estimatedCostUsd": 0.19695711999999999,
-    "totalTokens": 120064,
+    "estimatedCostUsd": 0.05901856,
+    "totalTokens": 120576,
     "totalTokensFresh": true,
     "modelProvider": "abacus",
     "model": "kimi-k2.6",
@@ -1837,5 +1837,56 @@
     "cacheRead": 49152,
     "cacheWrite": 0,
     "estimatedCostUsd": 0.025049019999999998
+  },
+  "agent:main:cron:be5ce0eb-8b1e-4827-b7b0-bbf213fb6259": {
+    "sessionId": "91a86f7b-5a06-408f-9d8d-80c27f6ffc22",
+    "updatedAt": 1778219973354,
+    "sessionStartedAt": 1778219973237,
+    "lastInteractionAt": 1778219973237,
+    "systemSent": true,
+    "sessionFile": "/home/ubuntu/.openclaw/agents/main/sessions/91a86f7b-5a06-408f-9d8d-80c27f6ffc22.jsonl",
+    "label": "Cron: Repo Backup",
+    "skillsSnapshot": {
+      "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>browser-automation</name>\n    <description>Use when controlling web pages with the OpenClaw browser tool, especially multi-step flows, login checks, tab management, or recovery from stale refs/timeouts.</description>\n    <location>/tmp/abacus-claw/dist/extensions/browser/skills/browser-automation/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Audit and harden hosts running OpenClaw for SSH, firewall, updates, exposure, cron checks, and risk posture.</description>\n    <location>/tmp/abacus-claw/skills/healthcheck/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures.</description>\n    <location>/tmp/abacus-claw/skills/node-connect/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>session-logs</name>\n    <description>Search and analyze your own session logs (older/parent conversations) using jq.</description>\n    <location>/tmp/abacus-claw/skills/session-logs/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Create, edit, improve, tidy, review, audit, or restructure AgentSkills and SKILL.md files.</description>\n    <location>/tmp/abacus-claw/skills/skill-creator/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow</name>\n    <description>Coordinate multi-step detached tasks as one durable TaskFlow job with owner context, state, waits, and child tasks.</description>\n    <location>/tmp/abacus-claw/skills/taskflow/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow-inbox-triage</name>\n    <description>Example TaskFlow pattern for inbox triage, intent routing, waiting on replies, and later summaries.</description>\n    <location>/tmp/abacus-claw/skills/taskflow-inbox-triage/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tmux</name>\n    <description>Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output.</description>\n    <location>/tmp/abacus-claw/skills/tmux/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>video-frames</name>\n    <description>Extract frames or short clips from videos using ffmpeg.</description>\n    <location>/tmp/abacus-claw/skills/video-frames/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather, rain, temperature, and forecasts for locations or travel planning.</description>\n    <location>/tmp/abacus-claw/skills/weather/SKILL.md</location>\n  </skill>\n</available_skills>",
+      "skills": [
+        {
+          "name": "browser-automation"
+        },
+        {
+          "name": "healthcheck"
+        },
+        {
+          "name": "node-connect"
+        },
+        {
+          "name": "session-logs",
+          "requiredEnv": []
+        },
+        {
+          "name": "skill-creator"
+        },
+        {
+          "name": "taskflow"
+        },
+        {
+          "name": "taskflow-inbox-triage"
+        },
+        {
+          "name": "tmux",
+          "requiredEnv": []
+        },
+        {
+          "name": "video-frames",
+          "requiredEnv": []
+        },
+        {
+          "name": "weather",
+          "requiredEnv": []
+        }
+      ],
+      "version": 0
+    },
+    "modelProvider": "abacus",
+    "model": "kimi-k2.6"
   }
 }
