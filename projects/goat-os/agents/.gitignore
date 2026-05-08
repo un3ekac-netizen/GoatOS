@@ -1,0 +1,5 @@
+# Ignore session logs, secrets, and runtime files
+*.jsonl
+*.jsonl.*
+*.sqlite
+*.sqlite-*

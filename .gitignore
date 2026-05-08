@@ -63,3 +63,6 @@ backup-*/
 .openclaw/openclaw.json.last-good
 .openclaw/exec-approvals.json
 .jira-credentials.json
+
+# Session reset files (contain secrets in history)
+.openclaw/agents/*/sessions/*.jsonl.reset.*
