@@ -1,7 +1,7 @@
 ```markdown
-# Keep this file empty (or with only comments) to skip heartbeat API calls.
+# Heartbeat Tasks
 
-# Add tasks below when you want the agent to check something periodically.
+- Check cron job results (build logs, daily briefs) and notify Albs of completions or failures
 ```
 
 ## Related

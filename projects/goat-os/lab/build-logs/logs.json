@@ -62,5 +62,44 @@
         ]
       }
     ]
+  },
+  {
+    "id": "self-improve-2026-05-07",
+    "name": "Cron Health Visualisation",
+    "status": "success",
+    "timestamp": "2026-05-07T17:00:00Z",
+    "duration": "~45m",
+    "summary": "Real-time per-job status tracking across all GoatOS modules — last run status, error detection, success/failure counts, and visual health indicators.",
+    "sections": [
+      {
+        "heading": "What Was Built",
+        "items": [
+          "Per-job health computation in Ops Dashboard: ok / error / pending / disabled states derived from cron job state.lastRunStatus",
+          "Ops Dashboard Cron Health card now shows Healthy, Errors, Pending, Disabled counts with colour-coded status dots",
+          "Cron Health tab expanded to 4-column summary (Total, Enabled, Disabled, Errors) and added Last Status column to job table",
+          "Brain Dashboard Automations card now shows live health status: red dot + 'X jobs failing' when errors detected, green dot + 'All jobs healthy' when clean",
+          "Lab Dashboard Build Logs card now shows Success and Failed counts with green/red text",
+          "Build Log detail viewer now renders a status badge pill (Success / Failed / Unknown) with appropriate colour coding",
+          "All status badges use module-consistent colours: green for success, red for errors, amber for warnings/pending"
+        ]
+      },
+      {
+        "heading": "Files Modified",
+        "items": [
+          "/home/ubuntu/projects/goat-os/index.html — Updated renderOpsDashboard(), renderBrainDashboard(), renderLabDashboard(), renderBuildLogDetail(), and Cron Health tab markup",
+          "/home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json — Marked 'Daily Brief Cron Job' as complete, added 'Cron Health Visualisation' as complete"
+        ]
+      },
+      {
+        "heading": "Why This Matters",
+        "items": [
+          "Albs can now see at a glance if overnight jobs are failing — no need to dig into raw JSON or CLI output",
+          "The Bug Check cron job timed out last night (error status); this visualisation surfaces that immediately in the Ops Dashboard",
+          "Build log success/failure tracking gives confidence in the stability of overnight improvements",
+          "Sets the foundation for future alerting — when a job fails, GoatOS can now visually flag it and eventually notify Albs",
+          "Aligns with Albs' goal of efficiency and delegation: the system monitors itself so he doesn't have to"
+        ]
+      }
+    ]
   }
 ]

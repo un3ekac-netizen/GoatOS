@@ -2,39 +2,96 @@
   "version": 1,
   "jobs": {
     "e1600945-83a4-452c-8b72-47accb02e063": {
-      "updatedAtMs": 1778162966137,
+      "updatedAtMs": 1778201547111,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 0 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
         "nextRunAtMs": 1778248800000
       }
     },
     "7b698e62-c47d-47e1-acc4-6242e01ab894": {
-      "updatedAtMs": 1778162970018,
+      "updatedAtMs": 1778201552829,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"15 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778170500000
+        "nextRunAtMs": 1778256900000,
+        "lastRunAtMs": 1778170500005,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 600381,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout",
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 1,
+        "consecutiveSkipped": 0
       }
     },
     "c94e8004-a71d-49bc-be86-b8b071deca6d": {
-      "updatedAtMs": 1778162974046,
+      "updatedAtMs": 1778202361142,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 3 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778173200000
+        "nextRunAtMs": 1778259600000,
+        "lastRunAtMs": 1778173200004,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 548684,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0,
+        "consecutiveSkipped": 0
       }
     },
     "19889f92-a19e-47f5-a68f-0b036bbe816b": {
-      "updatedAtMs": 1778162978173,
+      "updatedAtMs": 1778201564019,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"30 6 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778185800000
+        "nextRunAtMs": 1778272200000,
+        "lastRunAtMs": 1778185800005,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 69218,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0,
+        "consecutiveSkipped": 0
       }
     },
     "be5ce0eb-8b1e-4827-b7b0-bbf213fb6259": {
-      "updatedAtMs": 1778163167903,
+      "updatedAtMs": 1778201570487,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778169600000,
-        "runningAtMs": 1778169600001
+        "nextRunAtMs": 1778256000000,
+        "lastRunAtMs": 1778169600003,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 26232,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0,
+        "consecutiveSkipped": 0
+      }
+    },
+    "fb72006a-22b4-44a9-950a-c616e1857afa": {
+      "updatedAtMs": 1778211014073,
+      "scheduleIdentity": "{\"version\":1,\"enabled\":false,\"schedule\":{\"kind\":\"cron\",\"expr\":\"*/15 7-20 * * 1-5\",\"tz\":\"Australia/Sydney\"}}",
+      "state": {
+        "lastRunAtMs": 1778211000003,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 14070,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0,
+        "consecutiveSkipped": 0
+      }
+    },
+    "833a735c-dc89-4f25-a0fe-ab60cb7dcbdd": {
+      "updatedAtMs": 1778218973450,
+      "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"every\",\"everyMs\":60000,\"anchorMs\":1778217817287}}",
+      "state": {
+        "nextRunAtMs": 1778219026910,
+        "lastRunAtMs": 1778218966910,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 6540,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0,
+        "consecutiveSkipped": 0,
+        "runningAtMs": 1778219026911
       }
     }
   }

@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { join, extname } from 'path';
 
 const PORT = 8766;
 
@@ -96,6 +96,16 @@ function getSessionHistory(sessionFile) {
     } catch { /* skip malformed */ }
   }
   return messages;
+}
+
+function getTasks() {
+  try { return JSON.parse(readFileSync('/home/ubuntu/projects/goat-os/ops/tasks.json', 'utf-8')); }
+  catch { return []; }
+}
+
+function getDeliverables() {
+  try { return JSON.parse(readFileSync('/home/ubuntu/projects/goat-os/ops/deliverables.json', 'utf-8')); }
+  catch { return []; }
 }
 
 // Old getCronJobs removed — replaced by file-based version below
@@ -216,6 +226,123 @@ const server = createServer((req, res) => {
       jsonResponse(res, getBuildLogs());
     } else if (path === '/api/ideas') {
       jsonResponse(res, getIdeas());
+    } else if (path === '/api/jira/sync' && req.method === 'POST') {
+      import('/home/ubuntu/projects/goat-os/ops/jira-sync.mjs').then(({ syncJira }) => {
+        syncJira().then(result => jsonResponse(res, result)).catch(e => jsonResponse(res, { error: e.message }, 500));
+      }).catch(e => jsonResponse(res, { error: e.message }, 500));
+      return;
+    } else if (path === '/api/tasks' && req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => body += chunk);
+      req.on('end', () => {
+        try {
+          const task = JSON.parse(body);
+          const tasks = getTasks();
+          const id = 'task-' + String(tasks.length + 1).padStart(3, '0') + '-' + Date.now().toString(36);
+          const now = new Date().toISOString();
+          const newTask = {
+            id,
+            title: task.title || 'Untitled',
+            description: task.description || '',
+            stage: task.stage || 'new',
+            priority: task.priority || 'medium',
+            assignee: task.assignee || 'Goat',
+            client: task.client || 'Hampr',
+            owner: 'Goat',
+            dueDate: task.dueDate || null,
+            slaDate: task.slaDate || task.dueDate || null,
+            blockers: task.blockers || [],
+            statusHistory: [{ stage: 'new', timestamp: now, note: task.note || 'Created by Goat via chat' }],
+            createdAt: now,
+            updatedAt: now
+          };
+          tasks.push(newTask);
+          writeFileSync('/home/ubuntu/projects/goat-os/ops/tasks.json', JSON.stringify(tasks, null, 2));
+          jsonResponse(res, newTask, 201);
+        } catch (e) { jsonResponse(res, { error: e.message }, 400); }
+      });
+      return;
+    } else if (path.startsWith('/api/tasks/') && path.endsWith('/deliverables') && req.method === 'GET') {
+      const taskId = path.replace('/api/tasks/', '').replace('/deliverables', '');
+      const delDir = join('/home/ubuntu/projects/goat-os/ops/deliverables', taskId);
+      try {
+        if (existsSync(delDir) && statSync(delDir).isDirectory()) {
+          const files = readdirSync(delDir).map(f => {
+            const fp = join(delDir, f);
+            const st = statSync(fp);
+            return {
+              name: f,
+              path: fp,
+              size: st.size,
+              updatedAt: st.mtimeMs,
+              content: st.size < 100000 ? readFileSync(fp, 'utf-8') : '(file too large to preview)'
+            };
+          });
+          jsonResponse(res, files);
+        } else {
+          jsonResponse(res, []);
+        }
+      } catch { jsonResponse(res, []); }
+    } else if (path.startsWith('/api/tasks/') && path.includes('/download/')) {
+      // /api/tasks/<taskId>/download/<filename>
+      const parts = path.replace('/api/tasks/', '').split('/download/');
+      const taskId = decodeURIComponent(parts[0]);
+      const filename = decodeURIComponent(parts[1] || '');
+      const filePath = join('/home/ubuntu/projects/goat-os/ops/deliverables', taskId, filename);
+      try {
+        if (existsSync(filePath) && statSync(filePath).isFile()) {
+          const ext = extname(filePath).toLowerCase();
+          const MIME_DL = {
+            '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            '.pdf': 'application/pdf',
+            '.md': 'text/markdown',
+            '.txt': 'text/plain',
+            '.js': 'application/javascript',
+            '.py': 'text/x-python',
+            '.ts': 'application/typescript',
+            '.json': 'application/json',
+            '.html': 'text/html',
+            '.csv': 'text/csv',
+          };
+          const mime = MIME_DL[ext] || 'application/octet-stream';
+          const data = readFileSync(filePath);
+          res.writeHead(200, {
+            'Content-Type': mime,
+            'Content-Disposition': `attachment; filename="${filename}"`,
+            'Content-Length': data.length,
+            'Access-Control-Allow-Origin': '*',
+          });
+          res.end(data);
+        } else {
+          jsonResponse(res, { error: 'file not found' }, 404);
+        }
+      } catch (e) { jsonResponse(res, { error: e.message }, 500); }
+    } else if (path === '/api/delegation-queue') {
+      try { jsonResponse(res, JSON.parse(readFileSync('/home/ubuntu/projects/goat-os/ops/delegation-queue.json', 'utf-8'))); }
+      catch { jsonResponse(res, []); }
+    } else if (path === '/api/tasks') {
+      jsonResponse(res, getTasks());
+    } else if (path === '/api/deliverables') {
+      jsonResponse(res, getDeliverables());
+    } else if (path.startsWith('/api/tasks/') && path.endsWith('/move') && req.method === 'PATCH') {
+      const taskId = path.replace('/api/tasks/', '').replace('/move', '');
+      let body = '';
+      req.on('data', chunk => body += chunk);
+      req.on('end', () => {
+        try {
+          const { stage } = JSON.parse(body);
+          const tasks = getTasks();
+          const task = tasks.find(t => t.id === taskId);
+          if (!task) { jsonResponse(res, { error: 'Task not found' }, 404); return; }
+          const oldStage = task.stage;
+          task.stage = stage;
+          task.updatedAt = new Date().toISOString();
+          task.statusHistory.push({ stage, timestamp: task.updatedAt, note: 'Manually moved by Albs' });
+          writeFileSync('/home/ubuntu/projects/goat-os/ops/tasks.json', JSON.stringify(tasks, null, 2));
+          jsonResponse(res, { id: taskId, stage, oldStage });
+        } catch (e) { jsonResponse(res, { error: e.message }, 400); }
+      });
+      return;
     } else if (path === '/api/cron') {
       jsonResponse(res, getCronJobs());
     } else if (path === '/api/cron/detail') {
@@ -246,7 +373,22 @@ const server = createServer((req, res) => {
     } else if (path === '/api/status') {
       jsonResponse(res, getStatus());
     } else {
-      jsonResponse(res, { error: 'not found' }, 404);
+      // Static file serving for GoatOS UI
+      const STATIC_DIR = '/home/ubuntu/projects/goat-os';
+      const filePath = path === '/' ? '/index.html' : path;
+      const fullPath = join(STATIC_DIR, filePath);
+      const MIME = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
+      try {
+        if (existsSync(fullPath) && statSync(fullPath).isFile()) {
+          const ext = extname(fullPath);
+          const mime = MIME[ext] || 'application/octet-stream';
+          const data = readFileSync(fullPath);
+          res.writeHead(200, { 'Content-Type': mime, 'Access-Control-Allow-Origin': '*' });
+          res.end(data);
+        } else {
+          jsonResponse(res, { error: 'not found' }, 404);
+        }
+      } catch { jsonResponse(res, { error: 'not found' }, 404); }
     }
   } catch (e) {
     jsonResponse(res, { error: e.message }, 500);

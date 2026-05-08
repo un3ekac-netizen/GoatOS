@@ -14,7 +14,7 @@
         "expr": "0 0 * * *",
         "tz": "Australia/Sydney"
       },
-      "sessionTarget": "current",
+      "sessionTarget": "isolated",
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
@@ -39,12 +39,12 @@
         "expr": "15 2 * * *",
         "tz": "Australia/Sydney"
       },
-      "sessionTarget": "current",
+      "sessionTarget": "isolated",
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "You are running a scheduled overnight bug check for GoatOS.\n\n1. Read /home/ubuntu/projects/goat-os/index.html and /home/ubuntu/projects/goat-os/api.mjs thoroughly\n2. Read /home/ubuntu/projects/goat-os/DESIGN.md for design rules\n3. Check for: broken JS logic, race conditions, missing null checks, CSS issues, API errors, data format mismatches, rendering bugs, accessibility issues\n4. Test the API by curling each endpoint: http://127.0.0.1:8766/api/sessions, /api/briefs, /api/os-docs, /api/prototypes, /api/overnight-builds, /api/build-logs, /api/ideas\n5. Fix any bugs you find directly in the source files\n6. After fixing, read /home/ubuntu/projects/goat-os/lab/build-logs/logs.json, then append a new build log entry with: id (bug-check-YYYY-MM-DD), name, status (success/failed), timestamp, duration, summary of what was found and fixed, and sections with headings 'Bugs Found', 'Fixes Applied', 'Files Modified'. If no bugs found, still log it as a clean scan.\n7. Write the updated logs.json back.\n8. Be careful — do NOT break working features. Test your fixes.",
-        "timeoutSeconds": 600
+        "message": "You are running a scheduled overnight bug check for GoatOS.\n\nPRIORITY: Speed. You have 15 minutes. Be efficient.\n\n1. Test the API first — curl each endpoint and check for errors:\n   - http://127.0.0.1:8766/api/sessions\n   - http://127.0.0.1:8766/api/briefs\n   - http://127.0.0.1:8766/api/os-docs\n   - http://127.0.0.1:8766/api/prototypes\n   - http://127.0.0.1:8766/api/overnight-builds\n   - http://127.0.0.1:8766/api/build-logs\n   - http://127.0.0.1:8766/api/ideas\n   - http://127.0.0.1:8766/api/cron\n\n2. If any endpoint fails, investigate and fix the API (api.mjs)\n\n3. Scan /home/ubuntu/projects/goat-os/index.html for: broken template literals, unclosed tags, missing function references, undefined variables. Use grep to search — do NOT read the full file line by line.\n\n4. Read /home/ubuntu/projects/goat-os/DESIGN.md and check for obvious design rule violations.\n\n5. Fix any bugs directly in the source files.\n\n6. Log results: read /home/ubuntu/projects/goat-os/lab/build-logs/logs.json, append a new entry with id (bug-check-YYYY-MM-DD), name 'Bug Check', status (success/failed), timestamp (ISO), summary, and sections: 'API Health', 'Bugs Found', 'Fixes Applied', 'Files Modified'. If clean, log it as a clean scan.\n\n7. Write the updated logs.json back.\n\nRULES:\n- Do NOT break working features\n- Be fast — scan smartly, don't read every line\n- If the API server isn't running, restart it: cd /home/ubuntu/projects/goat-os && nohup node api.mjs > /tmp/goat-os-api.log 2>&1 &",
+        "timeoutSeconds": 900
       },
       "delivery": {
         "mode": "none"
@@ -64,12 +64,12 @@
         "expr": "0 3 * * *",
         "tz": "Australia/Sydney"
       },
-      "sessionTarget": "current",
+      "sessionTarget": "isolated",
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "You are running a scheduled overnight self-improvement task for GoatOS.\n\nCONTEXT: Read these files first for full context:\n- /home/ubuntu/USER.md (who Albs is, what he cares about)\n- /home/ubuntu/IDENTITY.md (who you are)\n- /home/ubuntu/projects/goat-os/lab/PURPOSE.md (lab vision)\n- /home/ubuntu/projects/goat-os/DESIGN.md (design rules: no emojis, Lucide icons, Ubuntu fonts, module colours)\n- /home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json (current backlog)\n\nPROCESS:\n1. Pick ONE module to audit (rotate: check which was last audited in ideas.json or build logs)\n2. Read the full codebase: /home/ubuntu/projects/goat-os/index.html and /home/ubuntu/projects/goat-os/api.mjs\n3. Identify ONE high-value improvement that aligns with Albs' goals (efficiency, delegation, Hampr ROI, GoatOS vision)\n4. Build it. Implement the feature directly in the source files.\n5. Test it — make sure existing features still work. curl the API endpoints to verify.\n6. Update /home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json — mark the idea as complete or add the new one\n7. Read /home/ubuntu/projects/goat-os/lab/build-logs/logs.json, then append a build log entry with: id (self-improve-YYYY-MM-DD), name, status, timestamp, summary, and sections for 'What Was Built', 'Files Modified', 'Why This Matters'\n8. Write the updated logs.json back.\n\nRULES:\n- NEVER break existing features\n- Follow the design system strictly (DESIGN.md)\n- Keep changes focused — one improvement per night\n- If unsure about something, skip it and log why\n- Make sure the file watcher will auto-deploy your changes (write to /home/ubuntu/projects/goat-os/index.html)",
-        "timeoutSeconds": 600
+        "message": "You are Goat, running a scheduled overnight self-improvement task for GoatOS.\n\nYou have 15 minutes. Be focused and efficient.\n\n== STEP 1: LOAD CONTEXT ==\nRead these files:\n- /home/ubuntu/USER.md (Albs — Chief of Staff at Hampr, what he cares about)\n- /home/ubuntu/IDENTITY.md (you are Goat, executive assistant)\n- /home/ubuntu/projects/goat-os/DESIGN.md (design rules: no emojis in the OS, Lucide icons, Ubuntu fonts, module colours)\n- /home/ubuntu/projects/goat-os/lab/PURPOSE.md (lab vision)\n- /home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json (backlog)\n- /home/ubuntu/projects/goat-os/lab/build-logs/logs.json (what was already built — READ THIS CAREFULLY)\n\n== STEP 2: PICK TONIGHT'S MODULE ==\nRotate modules in order: Ops -> Brain -> Lab -> Ops -> ...\nCheck the last 3 build log entries to see which module was last improved. Pick the NEXT one in rotation.\n\nMODULE OWNERSHIP (never cross these boundaries):\n- OPS: System health, monitoring, session management, cron health, org chart, infrastructure dashboards\n- BRAIN: Daily briefs, automations, OS docs, memory, intelligence, data analysis\n- LAB: Prototypes, build logs, self-improvement backlog, experiments\n\n== STEP 3: DEDUP CHECK ==\nBefore building ANYTHING:\n1. grep the codebase for similar functionality: grep -r 'keyword' /home/ubuntu/projects/goat-os/index.html\n2. Read the build logs to see what was already shipped\n3. If something similar exists, IMPROVE it instead of rebuilding\n4. If the feature already exists and works well, pick a DIFFERENT improvement\n\n== STEP 4: BUILD ==\n1. Identify ONE high-value improvement for tonight's module\n2. It must align with Albs' goals: efficiency, delegation, Hampr ROI, GoatOS vision\n3. Implement directly in the source files\n4. Test — curl API endpoints to verify nothing broke\n5. Make sure the feature lives in the CORRECT module (not scattered across modules)\n\n== STEP 5: LOG ==\n1. Update /home/ubuntu/projects/goat-os/lab/self-improvement/ideas.json\n2. Read /home/ubuntu/projects/goat-os/lab/build-logs/logs.json\n3. Append a new entry: id (self-improve-YYYY-MM-DD), name, status, timestamp (ISO), summary, and sections: 'Module', 'What Was Built', 'Dedup Check' (what you verified didn't already exist), 'Files Modified', 'Why This Matters'\n4. Write updated logs.json back\n\n== RULES ==\n- NEVER break existing features\n- Follow DESIGN.md strictly (no emojis in OS, Lucide icons, Ubuntu fonts)\n- ONE improvement per night — stay focused\n- ONE module per night — respect boundaries\n- If unsure, skip and log why\n- The file watcher auto-deploys changes to index.html\n- NEVER build something that already exists — check first",
+        "timeoutSeconds": 900
       },
       "delivery": {
         "mode": "none"
@@ -89,7 +89,7 @@
         "expr": "30 6 * * *",
         "tz": "Australia/Sydney"
       },
-      "sessionTarget": "current",
+      "sessionTarget": "isolated",
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
@@ -114,12 +114,62 @@
         "expr": "0 2 * * *",
         "tz": "Australia/Sydney"
       },
-      "sessionTarget": "session:agent:main:main",
+      "sessionTarget": "isolated",
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
         "message": "You are running a scheduled nightly backup of the GoatOS workspace to GitHub.\n\nPROCESS:\n1. cd /home/ubuntu\n2. Run: git add -A\n3. Check git status — if there are changes, commit with message: \"Nightly backup — [YYYY-MM-DD]\" with a brief summary of what changed\n4. If no changes, skip the commit\n5. Run: git push origin main\n6. Verify the push succeeded\n\nRULES:\n- The .gitignore is already configured to exclude secrets (openclaw.json, .git-credentials, API tokens, session logs, etc.)\n- Do NOT modify the .gitignore\n- Do NOT commit if there are no changes\n- If push fails, log the error but do not retry more than once\n- Do NOT modify any source files — this is a backup job only",
         "timeoutSeconds": 120
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {}
+    },
+    {
+      "id": "fb72006a-22b4-44a9-950a-c616e1857afa",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Jira Sync",
+      "description": "Syncs COS board tickets tagged with Goat-OS=Yes into the Pipeline",
+      "enabled": false,
+      "createdAtMs": 1778208539327,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/15 7-20 * * 1-5",
+        "tz": "Australia/Sydney"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Run the Jira sync by executing: curl -s -X POST http://127.0.0.1:8766/api/jira/sync\n\nReport the result. If any new tasks were created, log what was imported. If the API server isn't running, start it first: cd /home/ubuntu/projects/goat-os && nohup node api.mjs > /tmp/goat-os-api.log 2>&1 &",
+        "timeoutSeconds": 120
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {}
+    },
+    {
+      "id": "833a735c-dc89-4f25-a0fe-ab60cb7dcbdd",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "goatos-task-delegator",
+      "description": "Checks for new Jira tasks in the delegation queue and spawns sub-agents to complete them",
+      "enabled": true,
+      "createdAtMs": 1778217817287,
+      "schedule": {
+        "kind": "every",
+        "everyMs": 60000,
+        "anchorMs": 1778217817287
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "You are the GoatOS Task Delegator. Your job is to check for queued tasks and delegate them to sub-agents.\n\n## Instructions\n\n1. Read `/home/ubuntu/projects/goat-os/ops/delegation-queue.json`\n2. If the array is empty, reply with just: NO_REPLY\n3. For EACH task in the queue:\n   a. Read the task details\n   b. Spawn a sub-agent using `sessions_spawn` with a detailed prompt (see below)\n   c. Update the task in `/home/ubuntu/projects/goat-os/ops/tasks.json`: set `stage` to `in-progress`, `delegated` to `true`, add a statusHistory entry\n   d. Remove the task from the delegation queue\n4. After processing all tasks, write the updated (now empty or reduced) queue back to the queue file\n5. Write the updated tasks back to tasks.json\n\n## Sub-Agent Prompt Template\n\nFor each task, spawn a sub-agent with `sessions_spawn` using mode=\"run\". The task message should include:\n- The task title, description, and task type\n- Clear instructions on what deliverable to produce\n- Where to save the output: `/home/ubuntu/projects/goat-os/ops/deliverables/<task-id>/`\n- The sub-agent MUST produce BOTH a .md file AND a .docx file. To create the .docx, run: `pandoc output.md -o output.docx`\n- After completing the work, the sub-agent must update tasks.json: set the task's `stage` to `albs-approval`, set `outputPath` to the .md deliverable file path, and add a statusHistory entry with note `Work completed, moved to Albs review`\n\n## Task Type → Output Format\n- **Code**: Produce working code files (.js, .py, .ts, etc.) with a README.md + README.docx explaining the code\n- **Research/Analysis**: Produce a detailed markdown report (.md) + .docx version\n- **Marketing**: Produce marketing deliverables (.md + .docx) — strategy docs, campaign briefs, etc.\n- **Copy**: Produce polished copy (.md + .docx) — ads, emails, landing pages, etc.\n- **Writing**: Produce written content (.md + .docx) — JDs, proposals, docs, articles, etc.\n- **Operational**: Produce SOPs, checklists, process docs (.md + .docx)\n- **null/unknown**: Default to Writing — produce a markdown document + .docx\n\n## CRITICAL: .docx Conversion\nAfter writing the .md file, ALWAYS run:\n```\npandoc <filename>.md -o <filename>.docx\n```\nThis ensures the user can download a Word document.\n\n## File Paths\n- Tasks: `/home/ubuntu/projects/goat-os/ops/tasks.json`\n- Queue: `/home/ubuntu/projects/goat-os/ops/delegation-queue.json`\n- Deliverables: `/home/ubuntu/projects/goat-os/ops/deliverables/<task-id>/`\n\n## Important\n- Create the deliverables subdirectory for each task before writing\n- The sub-agent prompt should be detailed and include the FULL task description\n- Use `yield` after spawning to let sub-agents complete\n- Do NOT skip tasks — delegate ALL of them",
+        "timeoutSeconds": 300
       },
       "delivery": {
         "mode": "none"

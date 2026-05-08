@@ -19,8 +19,16 @@
     "id": "daily-brief-cron",
     "title": "Daily Brief Cron Job",
     "description": "Automated morning brief generation with priorities, follow-ups, and completed tasks.",
-    "stage": "in-progress",
+    "stage": "complete",
     "priority": "high",
     "createdAt": "2026-05-07T13:03:00Z"
+  },
+  {
+    "id": "cron-health-viz",
+    "title": "Cron Health Visualisation",
+    "description": "Real-time per-job status tracking in Ops dashboard and Cron Health tab — last run status, error detection, success/failure counts across all modules.",
+    "stage": "complete",
+    "priority": "high",
+    "createdAt": "2026-05-07T17:00:00Z"
   }
 ]

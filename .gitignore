@@ -62,3 +62,4 @@ backup-*/
 .openclaw/openclaw.json.bak*
 .openclaw/openclaw.json.last-good
 .openclaw/exec-approvals.json
+.jira-credentials.json
