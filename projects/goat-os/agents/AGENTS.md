@@ -55,7 +55,7 @@ Agents will be able to message each other via a shared protocol:
 | Task Type | Agent | Output Format |
 |-----------|-------|---------------|
 | Code | Forge | Code files + README |
-| Research/Analysis | Castle | Markdown report |
+| Research/Analysis | Echo | Markdown report |
 | Marketing | Vector | Marketing strategy doc |
 | Copy | Vector | Polished copy (ads, emails, etc.) |
 | Writing | Vector | Written content (JDs, proposals, etc.) |

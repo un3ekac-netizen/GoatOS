@@ -27,7 +27,7 @@ function saveQueue(queue) {
 function getAgentConfig(taskType) {
   const configs = {
     'Code': { agent: 'Forge', format: 'code', ext: 'js' },
-    'Research/Analysis': { agent: 'Castle', format: 'report', ext: 'md' },
+    'Research/Analysis': { agent: 'Echo', format: 'report', ext: 'md' },
     'Marketing': { agent: 'Vector', format: 'marketing', ext: 'md' },
     'Copy': { agent: 'Vector', format: 'copy', ext: 'md' },
     'Writing': { agent: 'Vector', format: 'writing', ext: 'md' },
