@@ -4,9 +4,9 @@
 
 | Agent | Name | Role | Avatar | Handles | Status |
 |-------|------|------|--------|---------|--------|
-| **Castle** | Castle | Chief Operating Officer | `avatar-castle.png` | Operational tasks (SOPs, checklists, process docs) | Not configured — uses main agent |
+| **Castle** | Castle | Chief Strategy Officer | `avatar-castle.png` | Research/Analysis (reports, market research) | Not configured — uses main agent |
 | **Forge** | Forge | Chief Technology Officer | `avatar-forge.png` | Code tasks (.js, .py, .ts, etc.) | Not configured — uses main agent |
-| **Echo** | Echo | Chief Strategy Officer | `avatar-echo.png` | Research/Analysis (reports, market research) | Not configured — uses main agent |
+| **Echo** | Echo | Chief Intelligence Officer | `avatar-echo.png` | AI Pulse, market research, competitive analysis | Not configured — uses main agent |
 | **Vector** | Vector | Chief Marketing Officer | `avatar-vector.png` | Marketing, Copy, Writing (JDs, campaigns, copy) | Not configured — uses main agent |
 
 ## How Delegation Works (Current)
@@ -55,7 +55,7 @@ Agents will be able to message each other via a shared protocol:
 | Task Type | Agent | Output Format |
 |-----------|-------|---------------|
 | Code | Forge | Code files + README |
-| Research/Analysis | Echo | Markdown report |
+| Research/Analysis | Castle | Markdown report |
 | Marketing | Vector | Marketing strategy doc |
 | Copy | Vector | Polished copy (ads, emails, etc.) |
 | Writing | Vector | Written content (JDs, proposals, etc.) |
