@@ -1,4 +1,4 @@
-# GoatOS Documentation — v0.2.0
+# GoatOS Documentation — v0.2.1
 
 _Last updated: Sunday, 17 May 2026_
 
@@ -71,7 +71,8 @@ GoatOS follows a **four-module architecture** with a local Node.js API backend a
 
 ### Ops — The Operational Command Centre
 
-**Colour:** Amber/neon (`#f59e0b`)
+**Colour:** Amber/neon (`#f59e0b`)  
+**Icon:** `cpu`
 
 #### Dashboard
 Three summary cards:
@@ -104,10 +105,14 @@ Visual hierarchy of the GoatOS agent team:
 
 ### Brain — Intelligence & Memory
 
-**Colour:** Sky blue (`#38bdf8`)
+**Colour:** Sky blue (`#38bdf8`)  
+**Icon:** `brain`
 
 #### Dashboard
-Preview cards for each Brain tab with live data snippets.
+Preview cards for each Brain tab with live data snippets:
+- **Daily Briefs** — Shows latest brief date
+- **Automations** — Live cron job count and health status
+- **OS Docs** — Last update timestamp
 
 #### Daily Briefs
 - **Left sidebar:** Date history with day-of-week icons
@@ -129,7 +134,8 @@ Preview cards for each Brain tab with live data snippets.
 
 ### Projects — Project Management
 
-**Colour:** Violet (`#a78bfa`)
+**Colour:** Violet (`#a78bfa`)  
+**Icon:** `folder-kanban`
 
 #### Dashboard
 - **Deliverable cards** — Progress bars, SLA countdowns, status badges
@@ -154,7 +160,8 @@ Preview cards for each Brain tab with live data snippets.
 
 ### Lab — Prototype & Self-Improvement Workspace
 
-**Colour:** Matrix green (`#22c55e`). Think Dexter's Lab.
+**Colour:** Matrix green (`#22c55e`). Think Dexter's Lab.  
+**Icon:** `flask-conical`
 
 #### Dashboard
 Preview cards for:
@@ -374,4 +381,4 @@ If you need to update manually:
 
 ---
 
-*GoatOS v0.2.0 — Built for Albs, by Goat. 🐐*
+*GoatOS v0.2.1 — Built for Albs, by Goat. 🐐*

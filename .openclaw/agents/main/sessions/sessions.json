@@ -1,7 +1,7 @@
 {
   "agent:main:main": {
     "sessionId": "2b9d3fef-b9d2-4dc6-a05e-cef83a420a00",
-    "updatedAt": 1778997114204,
+    "updatedAt": 1779029375711,
     "sessionStartedAt": 1778996744622,
     "lastInteractionAt": 1778997072834,
     "systemSent": true,
@@ -59,10 +59,10 @@
       "version": 0
     },
     "status": "done",
-    "startedAt": 1778997074041,
+    "startedAt": 1779029373154,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1778997073965,
+      "generatedAt": 1779029373073,
       "sessionId": "2b9d3fef-b9d2-4dc6-a05e-cef83a420a00",
       "sessionKey": "agent:main:main",
       "provider": "abacus",
@@ -82,9 +82,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 40387,
+        "chars": 38325,
         "projectContextChars": 23656,
-        "nonProjectContextChars": 16731
+        "nonProjectContextChars": 14669
       },
       "injectedWorkspaceFiles": [
         {
@@ -191,7 +191,7 @@
       },
       "tools": {
         "listChars": 0,
-        "schemaChars": 25007,
+        "schemaChars": 14734,
         "entries": [
           {
             "name": "read",
@@ -213,21 +213,15 @@
           },
           {
             "name": "exec",
-            "summaryChars": 539,
+            "summaryChars": 446,
             "schemaChars": 1139,
             "propertiesCount": 12
           },
           {
             "name": "process",
-            "summaryChars": 416,
+            "summaryChars": 322,
             "schemaChars": 1011,
             "propertiesCount": 12
-          },
-          {
-            "name": "whatsapp_login",
-            "summaryChars": 74,
-            "schemaChars": 283,
-            "propertiesCount": 5
           },
           {
             "name": "canvas",
@@ -236,21 +230,9 @@
             "propertiesCount": 18
           },
           {
-            "name": "nodes",
-            "summaryChars": 173,
-            "schemaChars": 1589,
-            "propertiesCount": 32
-          },
-          {
-            "name": "cron",
-            "summaryChars": 4268,
-            "schemaChars": 7876,
-            "propertiesCount": 13
-          },
-          {
             "name": "message",
-            "summaryChars": 91,
-            "schemaChars": 5856,
+            "summaryChars": 102,
+            "schemaChars": 5868,
             "propertiesCount": 106
           },
           {
@@ -258,12 +240,6 @@
             "summaryChars": 305,
             "schemaChars": 316,
             "propertiesCount": 3
-          },
-          {
-            "name": "gateway",
-            "summaryChars": 697,
-            "schemaChars": 537,
-            "propertiesCount": 13
           },
           {
             "name": "agents_list",
@@ -335,17 +311,17 @@
       }
     },
     "inputTokens": 0,
-    "outputTokens": 679,
-    "cacheRead": 22528,
+    "outputTokens": 8,
+    "cacheRead": 12288,
     "cacheWrite": 0,
-    "estimatedCostUsd": 0.03450096,
-    "totalTokens": 22528,
+    "estimatedCostUsd": 0.0019980799999999997,
+    "totalTokens": 12288,
     "totalTokensFresh": true,
     "modelProvider": "abacus",
     "model": "kimi-k2.6",
     "contextTokens": 262144,
-    "endedAt": 1778997114108,
-    "runtimeMs": 40067
+    "endedAt": 1779029375612,
+    "runtimeMs": 2458
   },
   "agent:main:dashboard:aacf153e-7d3f-43ab-a007-f43d690ae755": {
     "sessionId": "c3ac9d69-bc01-4d83-a703-6d5f8967246d",
@@ -1845,12 +1821,12 @@
   },
   "agent:main:cron:be5ce0eb-8b1e-4827-b7b0-bbf213fb6259": {
     "label": "Cron: Repo Backup",
-    "sessionId": "686a1879-231b-47c6-8f15-d2ea49302c80",
-    "updatedAt": 1778997918735,
-    "sessionStartedAt": 1778997918608,
-    "lastInteractionAt": 1778997918608,
+    "sessionId": "6744edd8-24b1-4aa3-b8ca-480b2c409c23",
+    "updatedAt": 1779033600163,
+    "sessionStartedAt": 1779033600014,
+    "lastInteractionAt": 1779033600014,
     "systemSent": true,
-    "sessionFile": "/home/ubuntu/.openclaw/agents/main/sessions/686a1879-231b-47c6-8f15-d2ea49302c80.jsonl",
+    "sessionFile": "/home/ubuntu/.openclaw/agents/main/sessions/6744edd8-24b1-4aa3-b8ca-480b2c409c23.jsonl",
     "skillsSnapshot": {
       "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>browser-automation</name>\n    <description>Use when controlling web pages with the OpenClaw browser tool, especially multi-step flows, login checks, tab management, or recovery from stale refs/timeouts.</description>\n    <location>/opt/abacus-claw/dist/extensions/browser/skills/browser-automation/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Audit and harden hosts running OpenClaw for SSH, firewall, updates, exposure, cron checks, and risk posture.</description>\n    <location>/opt/abacus-claw/skills/healthcheck/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures.</description>\n    <location>/opt/abacus-claw/skills/node-connect/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>session-logs</name>\n    <description>Search and analyze your own session logs (older/parent conversations) using jq.</description>\n    <location>/opt/abacus-claw/skills/session-logs/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Create, edit, improve, tidy, review, audit, or restructure AgentSkills and SKILL.md files.</description>\n    <location>/opt/abacus-claw/skills/skill-creator/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow</name>\n    <description>Coordinate multi-step detached tasks as one durable TaskFlow job with owner context, state, waits, and child tasks.</description>\n    <location>/opt/abacus-claw/skills/taskflow/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow-inbox-triage</name>\n    <description>Example TaskFlow pattern for inbox triage, intent routing, waiting on replies, and later summaries.</description>\n    <location>/opt/abacus-claw/skills/taskflow-inbox-triage/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tmux</name>\n    <description>Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output.</description>\n    <location>/opt/abacus-claw/skills/tmux/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>video-frames</name>\n    <description>Extract frames or short clips from videos using ffmpeg.</description>\n    <location>/opt/abacus-claw/skills/video-frames/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather, rain, temperature, and forecasts for locations or travel planning.</description>\n    <location>/opt/abacus-claw/skills/weather/SKILL.md</location>\n  </skill>\n</available_skills>",
       "skills": [
@@ -1895,13 +1871,13 @@
     "model": "kimi-k2.6"
   },
   "agent:main:cron:e1600945-83a4-452c-8b72-47accb02e063": {
-    "sessionId": "d9faa39d-ca7c-4a4c-bf83-cf4719049edc",
-    "updatedAt": 1778996839205,
-    "sessionStartedAt": 1778996839050,
-    "lastInteractionAt": 1778996839050,
-    "systemSent": true,
-    "sessionFile": "/home/ubuntu/.openclaw/agents/main/sessions/d9faa39d-ca7c-4a4c-bf83-cf4719049edc.jsonl",
     "label": "Cron: Rolling OS Docs",
+    "sessionId": "d1a225f5-7363-414f-9e43-74ec0ccf43e2",
+    "updatedAt": 1779026400164,
+    "sessionStartedAt": 1779026400015,
+    "lastInteractionAt": 1779026400015,
+    "systemSent": true,
+    "sessionFile": "/home/ubuntu/.openclaw/agents/main/sessions/d1a225f5-7363-414f-9e43-74ec0ccf43e2.jsonl",
     "skillsSnapshot": {
       "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>browser-automation</name>\n    <description>Use when controlling web pages with the OpenClaw browser tool, especially multi-step flows, login checks, tab management, or recovery from stale refs/timeouts.</description>\n    <location>/opt/abacus-claw/dist/extensions/browser/skills/browser-automation/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Audit and harden hosts running OpenClaw for SSH, firewall, updates, exposure, cron checks, and risk posture.</description>\n    <location>/opt/abacus-claw/skills/healthcheck/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures.</description>\n    <location>/opt/abacus-claw/skills/node-connect/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>session-logs</name>\n    <description>Search and analyze your own session logs (older/parent conversations) using jq.</description>\n    <location>/opt/abacus-claw/skills/session-logs/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Create, edit, improve, tidy, review, audit, or restructure AgentSkills and SKILL.md files.</description>\n    <location>/opt/abacus-claw/skills/skill-creator/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow</name>\n    <description>Coordinate multi-step detached tasks as one durable TaskFlow job with owner context, state, waits, and child tasks.</description>\n    <location>/opt/abacus-claw/skills/taskflow/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow-inbox-triage</name>\n    <description>Example TaskFlow pattern for inbox triage, intent routing, waiting on replies, and later summaries.</description>\n    <location>/opt/abacus-claw/skills/taskflow-inbox-triage/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tmux</name>\n    <description>Remote-control tmux sessions for interactive CLIs by sending keystrokes and scraping pane output.</description>\n    <location>/opt/abacus-claw/skills/tmux/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>video-frames</name>\n    <description>Extract frames or short clips from videos using ffmpeg.</description>\n    <location>/opt/abacus-claw/skills/video-frames/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather, rain, temperature, and forecasts for locations or travel planning.</description>\n    <location>/opt/abacus-claw/skills/weather/SKILL.md</location>\n  </skill>\n</available_skills>",
       "skills": [
@@ -1946,9 +1922,9 @@
     "model": "kimi-k2.6",
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1778996841889,
-      "sessionId": "d9faa39d-ca7c-4a4c-bf83-cf4719049edc",
-      "sessionKey": "agent:main:cron:e1600945-83a4-452c-8b72-47accb02e063:run:d9faa39d-ca7c-4a4c-bf83-cf4719049edc",
+      "generatedAt": 1779026403306,
+      "sessionId": "d1a225f5-7363-414f-9e43-74ec0ccf43e2",
+      "sessionKey": "agent:main:cron:e1600945-83a4-452c-8b72-47accb02e063:run:d1a225f5-7363-414f-9e43-74ec0ccf43e2",
       "provider": "abacus",
       "model": "kimi-k2.6",
       "workspaceDir": "/home/ubuntu",
@@ -2179,12 +2155,12 @@
       }
     },
     "contextTokens": 262144,
-    "inputTokens": 32943,
-    "outputTokens": 4882,
+    "inputTokens": 35924,
+    "outputTokens": 4704,
     "totalTokens": 53248,
     "totalTokensFresh": true,
-    "cacheRead": 217088,
+    "cacheRead": 116736,
     "cacheWrite": 0,
-    "estimatedCostUsd": 0.08555792999999999
+    "estimatedCostUsd": 0.07162156
   }
 }
