@@ -2,33 +2,39 @@
   "version": 1,
   "jobs": {
     "e1600945-83a4-452c-8b72-47accb02e063": {
-      "updatedAtMs": 1778201547111,
+      "updatedAtMs": 1778996978189,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 0 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778248800000
+        "nextRunAtMs": 1779026400000,
+        "lastRunAtMs": 1778996839045,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 139144,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0,
+        "consecutiveSkipped": 0
       }
     },
     "7b698e62-c47d-47e1-acc4-6242e01ab894": {
       "updatedAtMs": 1778201552829,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"15 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778256900000,
+        "nextRunAtMs": 1778996849040,
         "lastRunAtMs": 1778170500005,
         "lastRunStatus": "error",
         "lastStatus": "error",
         "lastDurationMs": 600381,
-        "lastError": "cron: job execution timed out",
         "lastErrorReason": "timeout",
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 1,
-        "consecutiveSkipped": 0
+        "consecutiveSkipped": 0,
+        "runningAtMs": 1778996980199
       }
     },
     "c94e8004-a71d-49bc-be86-b8b071deca6d": {
       "updatedAtMs": 1778202361142,
-      "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 3 * * *\",\"tz\":\"Australia/Sydney\"}}",
+      "scheduleIdentity": "{\"version\":1,\"enabled\":false,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 3 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778259600000,
         "lastRunAtMs": 1778173200004,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
@@ -42,28 +48,30 @@
       "updatedAtMs": 1778201564019,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"30 6 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778272200000,
+        "nextRunAtMs": 1778996854040,
         "lastRunAtMs": 1778185800005,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
         "lastDurationMs": 69218,
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 0,
-        "consecutiveSkipped": 0
+        "consecutiveSkipped": 0,
+        "runningAtMs": 1778996980199
       }
     },
     "be5ce0eb-8b1e-4827-b7b0-bbf213fb6259": {
       "updatedAtMs": 1778219986101,
       "scheduleIdentity": "{\"version\":1,\"enabled\":true,\"schedule\":{\"kind\":\"cron\",\"expr\":\"0 2 * * *\",\"tz\":\"Australia/Sydney\"}}",
       "state": {
-        "nextRunAtMs": 1778256000000,
+        "nextRunAtMs": 1778996844040,
         "lastRunAtMs": 1778219973000,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
         "lastDurationMs": 13101,
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 0,
-        "consecutiveSkipped": 0
+        "consecutiveSkipped": 0,
+        "runningAtMs": 1778996980199
       }
     },
     "fb72006a-22b4-44a9-950a-c616e1857afa": {

@@ -57,7 +57,7 @@
       "sessionKey": "agent:main:main",
       "name": "Overnight Self-Improvement",
       "description": "Audits one GoatOS module and builds one improvement overnight",
-      "enabled": true,
+      "enabled": false,
       "createdAtMs": 1778162822836,
       "schedule": {
         "kind": "cron",
